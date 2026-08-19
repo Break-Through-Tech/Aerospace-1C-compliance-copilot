@@ -1,7 +1,7 @@
 # Compliance Copilot: Auditing Software Requirements Against Engineering Standards
 
-**Company / Org:** Break Through Tech AI Studio
-**Challenge Advisor:** Beth Parnell elizabeth.parnell@breakthroughtech.org 
+**Company / Org:** Break Through Tech AI Studio  
+**Challenge Advisor:** Beth Parnell elizabeth.parnell@breakthroughtech.org  
 **Program:** Break Through Tech AI Studio - Fall 2026  
 
 ---
