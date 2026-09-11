@@ -81,6 +81,6 @@ Wonderful job peeps! Session C in the books. What now I hear from the back. Well
     - [Submit Your Team Alliance](https://learn.ecornell.cornell.edu/courses/1934566/assignments/14801667)
     - [Submit Your Project Brief and Workplan](https://learn.ecornell.cornell.edu/courses/1934566/assignments/14801666)
 - Next meeting is **Saturday, Sept 12st, 12pm - 3pm EST**
-    - Every team member is expected to put in 1 to 3 hours of work outside these workshop Tuesday time slots.
+    - Every team member is expected to put in 1 to 3 hours of work outside these workshop Saturday time slots.
 - Attend office hours - [Office Hours](../office-hours.md)
     - Office hours is not just office hours it's a **virtual co-working space** or **focus rooms**. Come with work, then work for a set amount of time in a focused space. Ask questions or just use this space as an accountability space.
