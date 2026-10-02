@@ -1,7 +1,5 @@
 # Compliance Copilot Data Card
 
-Version 1.0.0, October 1, 2026.
-
 ## Dataset
 
 50 synthetic software requirement/standard-clause pairs covering 44 unique SWE IDs in NASA NPR 7150.2D. These are fictional planning, engineering, security, testing, and management statements, not records from a NASA project.
@@ -18,7 +16,7 @@ An express violation takes precedence over partial positive coverage. Ordinary p
 
 - Original 50 examples: [team spreadsheet](https://docs.google.com/spreadsheets/d/1uFHTLkBYmrktTkqfwUdFjSMYvDdwiHC61SiBqQt2r5w/edit), snapshot October 1. The team plan names Garima Chauhan and Meryum Sohail as creators. Original fields remain in [source.json](../data/benchmark/source.json).
 - Standard: [NASA NPR 7150.2D](https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D), including mandatory lists and the traceability table. The repository PDF was compared with the [official NASA PDF](https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf) and matched byte for byte. This dataset pins revision D.
-- All 50 original pairs received clause and label review. Fourteen examples were clarified in this new version to remove scope ambiguity or make obligations explicit. Twenty IDs were zero-padded. [review.csv](../data/benchmark/review.csv) records original IDs, labels, initial reviews, and final decisions.
+- All 50 original pairs received clause and label review. Fourteen examples were clarified in the reviewed benchmark to remove scope ambiguity or make obligations explicit. Twenty IDs were zero-padded. [review.csv](../data/benchmark/review.csv) records original IDs, labels, initial reviews, and final decisions.
 - Original Compliant scenarios remain Meets after clarification. Original Gap scenarios become Partial or Gap. No example was added or removed. The original spreadsheet and shared notebook were not edited.
 
 ## Files and use
@@ -27,7 +25,7 @@ An express violation takes precedence over partial positive coverage. Ordinary p
 | --- | --- |
 | [requirements.csv](../data/benchmark/requirements.csv) | Evaluation pairs, verdicts, gap types, and rationales. |
 | [clauses.json](../data/benchmark/clauses.json) | Complete cited obligations, SWE IDs, clause numbers, and PDF page locators. |
-| [manifest.json](../data/benchmark/manifest.json) | Version, counts, provenance, and SHA-256 hashes. |
+| [manifest.json](../data/benchmark/manifest.json) | Counts, provenance, and SHA-256 hashes. |
 | [Validation notebook](../notebooks/Benchmark_Validation_Alan_Guo.ipynb) | Reproduces checks and summarizes changes. |
 
 CSV encoding is UTF-8. IDs and clause identifiers are strings. An empty `gap_type` is intentional for Meets examples. Reference records retain table/list obligations that the existing 130-row source CSV abbreviates.

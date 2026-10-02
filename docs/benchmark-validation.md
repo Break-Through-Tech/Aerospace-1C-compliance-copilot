@@ -10,7 +10,7 @@ Task: validate labels and clause citations, finalize the benchmark CSV, and docu
 - Complete source lists/table included for SWE-027, SWE-052, and SWE-087.
 - Repository PDF matches the official NASA download: SHA-256 `1a5b7f9b0b0141e88374adf7a21a4d6ced0b29c221ca89a0a514f495d6532802`.
 
-The initial review found that several original Compliant examples did not explicitly cover the whole clause. The new version clarifies their intended scenarios rather than silently treating underspecified text as compliant. It also makes the original binary Gap cases usable in the project's three-class schema. See the [Data Card](benchmark-data-card.md) for the rubric and limitations.
+The initial review found that several original Compliant examples did not explicitly cover the whole clause. The reviewed benchmark clarifies their intended scenarios rather than silently treating underspecified text as compliant. It also makes the original binary Gap cases usable in the project's three-class schema. See the [Data Card](benchmark-data-card.md) for the rubric and limitations.
 
 ## Wording changes
 

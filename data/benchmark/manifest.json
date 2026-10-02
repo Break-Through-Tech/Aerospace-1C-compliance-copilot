@@ -1,6 +1,5 @@
 {
   "dataset_name": "Compliance Copilot synthetic benchmark",
-  "version": "1.0.0",
   "review_date": "2026-10-01",
   "timezone": "America/Los_Angeles",
   "row_count": 50,
