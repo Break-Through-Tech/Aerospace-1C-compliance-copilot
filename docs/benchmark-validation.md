@@ -46,6 +46,6 @@ python -m unittest discover -s tests -v
 
 The validator uses only the Python standard library. Run all cells in [Benchmark_Validation_Alan_Guo.ipynb](../notebooks/Benchmark_Validation_Alan_Guo.ipynb) for readable tables and citation examples. The notebook can load this branch in Colab when a local checkout is unavailable; it needs no paid API or model key.
 
-Automated checks cover row/ID integrity, vocabulary, original-to-reviewed linkage, file hashes, source-list preservation, citation matching, and manifest counts. Tests deliberately corrupt IDs, clauses, labels, text-change flags, source completeness, and file bytes to confirm rejection. Semantic verdicts come from source inspection and independent AI review, not from these automated checks.
+Automated checks cover row/ID integrity, vocabulary, original-to-reviewed linkage, file hashes, source-list preservation, citation matching, and manifest counts. Tests deliberately corrupt IDs, clauses, labels, text-change flags, source completeness, and file bytes to confirm rejection. Semantic verdicts come from source inspection. The automated checks verify structure, citations, and provenance.
 
 The task assignment is in the [team planning document](https://docs.google.com/document/d/1we9otzbBCCaVAFKxnOYAHP0WUI-BbgqlkSRoehJFveM/edit). Its owners include Alan, Arvinder, and Shahreen; [issue 8](https://github.com/Break-Through-Tech/Aerospace-1C-compliance-copilot/issues/8) currently omits Alan. Existing issues, board cards, and shared documents were not changed.

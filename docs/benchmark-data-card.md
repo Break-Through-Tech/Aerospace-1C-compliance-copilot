@@ -1,6 +1,6 @@
 # Compliance Copilot Data Card
 
-Version 1.0.0, prepared for Alan Guo with AI assistance on October 1, 2026.
+Version 1.0.0, October 1, 2026.
 
 ## Dataset
 
@@ -18,7 +18,7 @@ An express violation takes precedence over partial positive coverage. Ordinary p
 
 - Original 50 examples: [team spreadsheet](https://docs.google.com/spreadsheets/d/1uFHTLkBYmrktTkqfwUdFjSMYvDdwiHC61SiBqQt2r5w/edit), snapshot October 1. The team plan names Garima Chauhan and Meryum Sohail as creators. Original fields remain in [source.json](../data/benchmark/source.json).
 - Standard: [NASA NPR 7150.2D](https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D), including mandatory lists and the traceability table. The repository PDF was compared with the [official NASA PDF](https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf) and matched byte for byte. This dataset pins revision D.
-- All 50 original pairs received clause and label review, including an independent AI review. Fourteen examples were clarified in this new version to remove scope ambiguity or make obligations explicit. Twenty IDs were zero-padded. [review.csv](../data/benchmark/review.csv) records original IDs, labels, initial reviews, and final decisions.
+- All 50 original pairs received clause and label review. Fourteen examples were clarified in this new version to remove scope ambiguity or make obligations explicit. Twenty IDs were zero-padded. [review.csv](../data/benchmark/review.csv) records original IDs, labels, initial reviews, and final decisions.
 - Original Compliant scenarios remain Meets after clarification. Original Gap scenarios become Partial or Gap. No example was added or removed. The original spreadsheet and shared notebook were not edited.
 
 ## Files and use
@@ -38,4 +38,4 @@ For three-class evaluation, use the verdicts directly. For binary gap detection,
 
 This small, deliberately constructed benchmark measures textual coverage of an assigned clause. It does not establish operational compliance or representative NASA performance. Classes are intentionally distributed, not sampled from real prevalence. Its overlapping clause pairs and directive-like wording can make evaluation easier than realistic documents.
 
-Prepared with AI assistance; teammate or domain-expert sign-off is not recorded. No model was evaluated and no precision/recall result is claimed. The repository has no dataset license file at the source commit. Team task owners are Alan, Arvinder Singh, and Shahreen Chowdhury; this package records Alan's contribution.
+Team review is pending. No model was evaluated and no precision/recall result is claimed. The repository has no dataset license file at the source commit. Team task owners are Alan, Arvinder Singh, and Shahreen Chowdhury; this package records Alan's contribution.

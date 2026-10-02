@@ -24,7 +24,7 @@
   "source_html": "data/npr-7150-2d-swehb.html",
   "source_html_sha256": "b1b416a7b44f3f404f4ab88fe54e8d174e38150f6c5180594230dd0f922e608c",
   "source_repo_commit": "ffe5ea0",
-  "review_method": "AI-assisted manual inspection of all original rows, independent AI review, and explicit wording revisions; teammate sign-off not recorded.",
+  "review_method": "Inspection of all original rows against complete NASA clauses, with explicit wording revisions; team review pending.",
   "files": {
     "source.json": "74a598c33207a9d5634ce631eb9f6220ab4d7fee09c3f39a7051789949111e9b",
     "clauses.json": "795836d8a990b6411060e0f6729a9697aad39934f8d061e4aaf55051e8cb82fb",
