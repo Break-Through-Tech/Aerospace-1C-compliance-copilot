@@ -1,0 +1,508 @@
+{
+  "source_url": "https://docs.google.com/spreadsheets/d/1uFHTLkBYmrktTkqfwUdFjSMYvDdwiHC61SiBqQt2r5w/edit",
+  "snapshot_date": "2026-10-01",
+  "timezone": "America/Los_Angeles",
+  "source_workbook_sha256": "3dbf5350b65e4ac372d9c1e891c42b0a2ad90e17e1c455f9714551e3bbbcf370",
+  "records": [
+    {
+      "Req ID": "NASA-SR-001",
+      "Category": "Software Planning",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall develop, maintain, and execute a Software Development Plan and a Software Security Plan covering the full software life cycle from requirements through retirement, addressing every applicable requirement of NPR 7150.2D per the approved Requirements Mapping Matrix.",
+      "SWE ID": "SWE-013",
+      "NPR Clause": "3.1.3",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "States both a development plan and a security plan, covers the full life cycle, and ties back to the approved tailoring \u2014 matches the clause's scope exactly."
+    },
+    {
+      "Req ID": "NASA-SR-002",
+      "Category": "Software Planning",
+      "Synthetic Software Requirement (NASA Project)": "The NASA software shall meet performance expectations as determined by the development team prior to delivery.",
+      "SWE ID": "SWE-034",
+      "NPR Clause": "3.1.5",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing documented, objective acceptance criteria",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-034 requires the PM to define and document acceptance criteria. This statement leaves criteria undefined and unrecorded ('as determined by the development team'), so there is no measurable, auditable pass/fail basis."
+    },
+    {
+      "Req ID": "NASA-SR-003",
+      "Category": "Requirements Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall perform, record, and maintain bi-directional traceability from system-level requirements down to software requirements, design elements, code, and test cases, and shall update the traceability matrix within 5 business days of any requirement change.",
+      "SWE ID": "SWE-052",
+      "NPR Clause": "3.12.1",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Traceability is explicitly bi-directional across all required elements (requirements, design, code, test) and includes a maintenance trigger, satisfying the clause's intent."
+    },
+    {
+      "Req ID": "NASA-SR-004",
+      "Category": "Requirements Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall establish, capture, record, approve, and maintain software requirements, including requirements for the reused GPS ephemeris library, in the DOORS requirements repository.",
+      "SWE ID": "SWE-050",
+      "NPR Clause": "4.1.2",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Covers establish/capture/record/approve/maintain and explicitly extends to a reused (COTS-like) component, matching the clause's coverage of COTS/GOTS/reused software requirements."
+    },
+    {
+      "Req ID": "NASA-SR-005",
+      "Category": "Requirements Management",
+      "Synthetic Software Requirement (NASA Project)": "Changes to NASA software requirements shall be logged in the issue tracker by the engineer making the change.",
+      "SWE ID": "SWE-053",
+      "NPR Clause": "4.1.5",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "No formal change control / approval or impact tracking",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-053 requires the PM to track AND manage changes. Logging by the originating engineer with no review, approval authority (e.g., CCB), or impact assessment step means changes are recorded but not managed."
+    },
+    {
+      "Req ID": "NASA-SR-006",
+      "Category": "Requirements Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall perform requirements validation with the customer, including scenario-based walkthroughs and a requirements review board, to confirm the software will perform as intended in the lunar relay operational environment prior to baselining.",
+      "SWE ID": "SWE-055",
+      "NPR Clause": "4.1.7",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Explicitly performs validation against the intended operational environment with a defined method (walkthroughs, review board), matching the clause."
+    },
+    {
+      "Req ID": "NASA-SR-007",
+      "Category": "Architecture & Design",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall transform the approved software requirements into a recorded software architecture, documented in the Software Architecture Description Document (SADD) and baselined under configuration management prior to detailed design.",
+      "SWE ID": "SWE-057",
+      "NPR Clause": "4.2.3",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Architecture is explicitly recorded (SADD) and baselined, satisfying the 'transform into a recorded software architecture' requirement."
+    },
+    {
+      "Req ID": "NASA-SR-008",
+      "Category": "Coding",
+      "Synthetic Software Requirement (NASA Project)": "NASA software developers shall write clean, maintainable code following good engineering judgment.",
+      "SWE ID": "SWE-061",
+      "NPR Clause": "4.4.3",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "No selected/defined coding standard",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-061 requires the PM to select, define, and adhere to specific coding methods, standards, and criteria. 'Good engineering judgment' names no selected standard (e.g., MISRA C, project style guide) and provides nothing to audit adherence against."
+    },
+    {
+      "Req ID": "NASA-SR-009",
+      "Category": "Coding",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall use static analysis tools during development and test to detect defects including buffer overruns, memory leaks, and race conditions, and shall track identified findings to closure in the defect tracking system.",
+      "SWE ID": "SWE-135",
+      "NPR Clause": "4.4.4",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Specifies the tool-based static analysis activity across development and test phases and names defect categories, matching the clause's minimum intent."
+    },
+    {
+      "Req ID": "NASA-SR-010",
+      "Category": "Coding & Unit Test",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall unit test each software code unit against its detailed design prior to integration, and shall record unit test results in the test management system.",
+      "SWE ID": "SWE-062",
+      "NPR Clause": "4.4.5",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Requires unit testing of code units with recorded results prior to integration, satisfying the clause."
+    },
+    {
+      "Req ID": "NASA-SR-011",
+      "Category": "Coding & Unit Test",
+      "Synthetic Software Requirement (NASA Project)": "NASA unit tests shall be executed by the responsible developer during code review.",
+      "SWE ID": "SWE-186",
+      "NPR Clause": "4.4.6",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "No assurance of repeatability",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-186 requires the PM to assure unit test results are repeatable (e.g., automated, scripted, environment-controlled). Ad hoc execution during code review with no automation or controlled environment gives no basis for repeatability."
+    },
+    {
+      "Req ID": "NASA-SR-012",
+      "Category": "Verification & Validation",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall test the flight and ground software against its baselined software requirements, using documented test procedures and pass/fail criteria traceable to each requirement.",
+      "SWE ID": "SWE-066",
+      "NPR Clause": "4.5.3",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Testing is explicitly performed against baselined requirements with traceable pass/fail criteria, matching the clause."
+    },
+    {
+      "Req ID": "NASA-SR-013",
+      "Category": "Verification & Validation",
+      "Synthetic Software Requirement (NASA Project)": "NASA software items may be placed under configuration management once qualification testing has demonstrated stable behavior.",
+      "SWE ID": "SWE-187",
+      "NPR Clause": "4.5.4",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "CM baseline established after testing, not before",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-187 requires software items to be placed under configuration management PRIOR TO testing. This requirement inverts the order, meaning test results cannot be tied to a known, controlled version of the software."
+    },
+    {
+      "Req ID": "NASA-SR-014",
+      "Category": "Safety-Critical Software",
+      "Synthetic Software Requirement (NASA Project)": "For safety-critical NASA flight software components, the Project Manager shall achieve high structural test coverage as demonstrated by the test team.",
+      "SWE ID": "SWE-219",
+      "NPR Clause": "3.7.4",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Coverage target not quantified to the required standard",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-219 requires 100 percent code test coverage using the Modified Condition/Decision Coverage (MC/DC) criterion (or documented rationale/alternate coverage per NASA-STD-8739.8) for safety-critical software. 'High coverage' with no percentage or coverage criterion named does not meet this specific, quantified bar."
+    },
+    {
+      "Req ID": "NASA-SR-015",
+      "Category": "Verification & Validation",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall verify, through test, every software requirement that traces to an identified hazard cause or hazard mitigation technique in the NASA Hazard Analysis, and shall record the verification evidence in the Verification Compliance Matrix.",
+      "SWE ID": "SWE-192",
+      "NPR Clause": "4.5.12",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Directly ties hazard-related requirements to test-based verification with recorded evidence, matching the clause's requirement for test (not analysis or inspection) verification of hazard-linked requirements."
+    },
+    {
+      "Req ID": "NASA-SR-016",
+      "Category": "Cybersecurity",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall perform a software cybersecurity assessment of all flight and ground software components per Agency security policy and the project's cybersecurity plan, prior to Critical Design Review.",
+      "SWE ID": "SWE-156",
+      "NPR Clause": "3.11.2",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Explicitly scopes the assessment to all components, ties it to Agency policy and the project's own plan, and sets a milestone gate, matching the clause."
+    },
+    {
+      "Req ID": "NASA-SR-017",
+      "Category": "Cybersecurity",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall test the software cybersecurity mitigations identified in the Cybersecurity Risk Register.",
+      "SWE ID": "SWE-159",
+      "NPR Clause": "3.11.5",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Test results not recorded",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-159 requires the PM to test the mitigations AND record the test results. This statement covers testing only; without recorded results there is no evidence trail to audit mitigation effectiveness."
+    },
+    {
+      "Req ID": "NASA-SR-018",
+      "Category": "Cybersecurity",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall identify, record, and implement secure coding practices (e.g., input validation, least privilege, secure error handling) in the Secure Coding Standard, and shall verify adherence during code review.",
+      "SWE ID": "SWE-207",
+      "NPR Clause": "3.11.6",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Covers identify, record, and implement, matching the three-part clause, and adds a verification mechanism."
+    },
+    {
+      "Req ID": "NASA-SR-019",
+      "Category": "Configuration Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall develop a Software Configuration Management Plan describing the functions, responsibilities, and authority for configuration management activities across the software life cycle, including the composition and authority of the Configuration Control Board.",
+      "SWE ID": "SWE-079",
+      "NPR Clause": "5.1.2",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Directly matches the clause's required content: functions, responsibilities, and authority for CM."
+    },
+    {
+      "Req ID": "NASA-SR-020",
+      "Category": "Configuration Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Configuration Control Board may perform software configuration audits at its discretion.",
+      "SWE ID": "SWE-084",
+      "NPR Clause": "5.1.7",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Audits are optional rather than performed",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-084 requires the PM to PERFORM software configuration audits to determine the correct version and verify content of configuration items. Making audits discretionary ('may... at its discretion') does not commit to performing them."
+    },
+    {
+      "Req ID": "NASA-SR-021",
+      "Category": "Peer Reviews",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall perform and report the results of software peer reviews for all safety-critical software requirements, design, and code artifacts, using a documented peer review checklist and recording findings in the peer review log.",
+      "SWE ID": "SWE-087",
+      "NPR Clause": "5.3.2",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Explicitly performs AND reports peer review results for the required artifact categories, matching the clause."
+    },
+    {
+      "Req ID": "NASA-SR-022",
+      "Category": "Measurement",
+      "Synthetic Software Requirement (NASA Project)": "NASA software management and technical measurements shall be collected by each subsystem lead and stored in a shared spreadsheet.",
+      "SWE ID": "SWE-090",
+      "NPR Clause": "5.4.2",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "No reporting, maintenance, or utilization of measurements",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-090 requires the PM to establish, record, maintain, report, and utilize measurements. Collection and storage alone omits reporting to stakeholders and using the data to inform decisions, so three of the five required activities are missing."
+    },
+    {
+      "Req ID": "NASA-SR-023",
+      "Category": "Non-Conformances",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall track and maintain all software non-conformances, including defects found in ground support tools and reused software components, in the Non-Conformance Tracking System through closure.",
+      "SWE ID": "SWE-201",
+      "NPR Clause": "5.5.1",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Explicitly includes tool and reused-component defects and tracks through closure, matching the clause's scope."
+    },
+    {
+      "Req ID": "NASA-SR-024",
+      "Category": "Non-Conformances",
+      "Synthetic Software Requirement (NASA Project)": "NASA software non-conformances shall be labeled as either 'important' or 'not important' by the reporting engineer.",
+      "SWE ID": "SWE-202",
+      "NPR Clause": "5.5.2",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Severity levels not clearly defined or standardized",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-202 requires the PM to define and implement clear, standardized severity levels across all non-conformance sources (including COTS/GOTS/reused software). Subjective, individually-assigned labels with no defined criteria fail to provide a clear, repeatable severity scheme."
+    },
+    {
+      "Req ID": "NASA-SR-025",
+      "Category": "COTS / Reused Software",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall satisfy the applicable conditions of SWE-027 for the reused GPS ephemeris library and the COTS RTOS, including evaluating the software against its intended use, verifying license and support terms, and assessing residual risk, prior to acquisition approval.",
+      "SWE ID": "SWE-027",
+      "NPR Clause": "3.1.14",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "Names the specific reused/COTS components and commits to the evaluation activities the clause enumerates (intended use, licensing, risk) prior to acquisition, matching the clause's intent."
+    },
+    {
+      "Req ID": "NASA-SR-026",
+      "Category": "Software Planning",
+      "Synthetic Software Requirement (NASA Project)": "The project manager shall document that the spacecraft navigation software team\u2019s progress will be reviewed and audited at the design-completion and testing-completion milestones.",
+      "SWE ID": "SWE-037",
+      "NPR Clause": "3.1.7",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement defines and documents specific milestones for reviewing and auditing software development progress, as required by SWE-037."
+    },
+    {
+      "Req ID": "NASA-SR-027",
+      "Category": "Software Measurement",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall collect the number of changes to the spacecraft navigation software requirements each month, track those changes in a requirements log, and report the results to the project team at monthly reviews.",
+      "SWE ID": "SWE-200",
+      "NPR Clause": "5.4.6",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement explicitly includes collecting, tracking, and reporting software requirements volatility metrics, as required by SWE-200."
+    },
+    {
+      "Req ID": "NASA-SR-028",
+      "Category": "Software Delivery",
+      "Synthetic Software Requirement (NASA Project)": "The project manager shall provide NASA with a PDF containing screenshots of the spacecraft navigation software\u2019s source code at project completion.",
+      "SWE ID": "SWE-042",
+      "NPR Clause": "3.1.10",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Source code not provided in a modifiable format",
+      "Auditor Rationale (why compliant / what's missing)": "Screenshots in a PDF do not give NASA access to editable source code, as required by SWE-042."
+    },
+    {
+      "Req ID": "NASA-SR-029",
+      "Category": "Non-Conformances",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall assess every high-severity software non-conformance and track corrective actions until each issue is resolved",
+      "SWE ID": "SWE-204",
+      "NPR Clause": "5.5.4",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement calls for process assessments for every high-severity software non-conformance, as required by SWE-204."
+    },
+    {
+      "Req ID": "NASA-SR-030",
+      "Category": "Software Reporting",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall require the spacecraft navigation software developers to provide NASA with software products, requirements traceability, change records, defect reports, and development and management metrics in electronic format.",
+      "SWE ID": "SWE-040",
+      "NPR Clause": "3.1.9",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement includes the software products, traceability, change-tracking information, nonconformances, and development and management metrics required by SWE-040, and specifies electronic delivery."
+    },
+    {
+      "Req ID": "NASA-SR-31",
+      "Category": "Software Planning",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall record the spacecraft navigation software\u2019s size and effort estimates, milestones, and project characteristics in the team\u2019s internal planning document at each major milestone.",
+      "SWE ID": "SWE-174",
+      "NPR Clause": "3.2.3",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing submission to Center measurement repository",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-174 requires the project manager to submit software planning parameters to the Center measurement repository at the conclusion of major milestones. This requirement records the parameters internally but does not require that submission."
+    },
+    {
+      "Req ID": "NASA-SR-32",
+      "Category": "Software Schedule",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall require the spacecraft navigation software developers to provide a software development schedule for NASA\u2019s review and submit updated schedules whenever NASA requests them.",
+      "SWE ID": "SWE-046",
+      "NPR Clause": "3.3.3",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement directs the software developers to provide a schedule for project review and updates when requested, as required by SWE-046."
+    },
+    {
+      "Req ID": "NASA-SR-33",
+      "Category": "Software Progress Reviews",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall hold monthly meetings with project stakeholders to review the spacecraft navigation software\u2019s schedule, development activities, performance metrics, and assessment results.",
+      "SWE ID": "SWE-018",
+      "NPR Clause": "3.3.2",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing issue tracking to resolution",
+      "Auditor Rationale (why compliant / what's missing)": "SWE-018 requires regular stakeholder reviews of software schedule activities, status, performance metrics, and assessment results and tracking issues to resolution. This requirement includes the reviews but omits issue tracking to resolution."
+    },
+    {
+      "Req ID": "NASA-SR-34",
+      "Category": "Cybersecurity Testing",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall conduct regression testing after changes to the spacecraft navigation software to confirm that previously working features still function correctly.",
+      "SWE ID": "SWE-191",
+      "NPR Clause": "4.5.11",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing security vulnerability testing",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement checks if the software still works after changes, but it doesn\u2019t check for new security problems"
+    },
+    {
+      "Req ID": "NASA-SR-35",
+      "Category": "Software Training",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall plan and track training for the spacecraft navigation software team and make sure team members complete the training needed for their project work.",
+      "SWE ID": "SWE-017",
+      "NPR Clause": "3.4.1",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says the project manager must plan, track, and make sure the software team gets the training needed for the project."
+    },
+    {
+      "Req ID": "NASA-SR-36",
+      "Category": "Software Acceptance",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall document the conditions the spacecraft navigation software must meet before NASA accepts it.",
+      "SWE ID": "SWE-034",
+      "NPR Clause": "3.1.5",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says the project manager must write down what the software needs to meet before it can be accepted."
+    },
+    {
+      "Req ID": "NASA-SR-37",
+      "Category": "Non-Conformances",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall record problems found in the spacecraft navigation software in a defect log when they are first reported.",
+      "SWE ID": "SWE-201",
+      "NPR Clause": "5.5.1",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing ongoing maintenance of problem records",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says to record software problems when they are reported, but it doesn\u2019t say to keep those records updated."
+    },
+    {
+      "Req ID": "NASA-SR-38",
+      "Category": "Non-Conformances",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall set clear severity levels for problems found in the spacecraft navigation software, its software tools, and any reused software components, and use those levels to classify every reported problem.",
+      "SWE ID": "SWE-202",
+      "NPR Clause": "5.5.2",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement sets clear severity levels and uses them for all reported software problems, including problems with tools and reused software."
+    },
+    {
+      "Req ID": "NASA-SR-39",
+      "Category": "Software Measurement",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall record and maintain measurements of the mission-planning software\u2019s performance throughout development.",
+      "SWE ID": "SWE-090",
+      "NPR Clause": "5.4.2",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing measurement reporting and use",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says to record and maintain measurements, but it doesn\u2019t say to report them or use them to manage the project."
+    },
+    {
+      "Req ID": "NASA-SR-40",
+      "Category": "Configuration Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall audit the ground-system monitoring software to confirm that each software component is the correct version and matches its configuration records.",
+      "SWE ID": "SWE-084",
+      "NPR Clause": "5.1.7",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement checks that the software components are the correct versions and match their records, as required by SWE-084."
+    },
+    {
+      "Req ID": "NASA-SR-41",
+      "Category": "Non-Conformances",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall review reported problems in the mission-planning application\u2019s reused software components only when those problems are marked as high severity.",
+      "SWE ID": "SWE-203",
+      "NPR Clause": "5.5.3",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing assessments for lower-severity problems",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement only calls for reviewing high-severity problems, but SWE-203 requires assessments of all reported problems in reused software components."
+    },
+    {
+      "Req ID": "NASA-SR-42",
+      "Category": "Software Planning",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall document any approved changes to the flight-control software\u2019s requirements in the plans and procedures used to develop, acquire, and deploy that software.",
+      "SWE ID": "SWE-121",
+      "NPR Clause": "3.1.12",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says to document approved tailored requirements in the plans and procedures used for the affected software."
+    },
+    {
+      "Req ID": "NASA-SR-43",
+      "Category": "Cybersecurity",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall identify cybersecurity risks in the mission-planning software and list ways to reduce them, but will not create a plan for putting those protections in place.",
+      "SWE ID": "SWE-154",
+      "NPR Clause": "3.11.3",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing security mitigation plan",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement identifies security risks and ways to reduce them, but leaves out a plan for putting those protections in place."
+    },
+    {
+      "Req ID": "NASA-SR-44",
+      "Category": "Cybersecurity",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall test the ground-control software\u2019s security protections and record the test results.",
+      "SWE ID": "SWE-159",
+      "NPR Clause": "3.11.5",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says to test the software\u2019s security protections and record the results."
+    },
+    {
+      "Req ID": "NASA-SR-45",
+      "Category": "Software Testing",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall review the ground-control software\u2019s test results and save a written evaluation of what the results show.",
+      "SWE ID": "SWE-068",
+      "NPR Clause": "4.5.5",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says to evaluate the software test results and record the evaluation."
+    },
+    {
+      "Req ID": "NASA-SR-46",
+      "Category": "Software Testing",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall update the flight software\u2019s test plans when its requirements change, but may leave the testing procedures unchanged.",
+      "SWE ID": "SWE-071",
+      "NPR Clause": "4.5.7",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing updates to testing procedures",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement updates the test plans but leaves out updates to the testing procedures."
+    },
+    {
+      "Req ID": "NASA-SR-47",
+      "Category": "Software Testing",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall test the mission-planning software on a desktop computer before delivery, without testing it on its intended operating system or a high-fidelity simulation.",
+      "SWE ID": "SWE-073",
+      "NPR Clause": "4.5.8",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing validation on the target platform or high-fidelity simulation",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement calls for testing on a desktop computer, but it leaves out validation on the software\u2019s intended platform or a high-fidelity simulation."
+    },
+    {
+      "Req ID": "NASA-SR-48",
+      "Category": "Software Risk Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall identify and record risks affecting the mission communication software, analyze them, and create plans to reduce them, but does not need to track the risks or share the plans with the project team.",
+      "SWE ID": "SWE-086",
+      "NPR Clause": 5.2,
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing risk tracking and communication",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement identifies risks and makes plans to reduce them, but it leaves out tracking the risks and sharing the plans."
+    },
+    {
+      "Req ID": "NASA-SR-49",
+      "Category": "Configuration Management",
+      "Synthetic Software Requirement (NASA Project)": "The NASA Project Manager shall keep a record of changes to the satellite communication software but does not need to evaluate how those changes affect the software.",
+      "SWE ID": "SWE-080",
+      "NPR Clause": "5.1.3",
+      "Ground Truth Label": "Gap",
+      "Gap Type": "Missing evaluation of software changes",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement says to track software changes, but it leaves out evaluating them."
+    },
+    {
+      "Req ID": "NASA-SR-50",
+      "Category": "Software Retirement",
+      "Synthetic Software Requirement (NASA Project)": "Before retiring the mission-planning software, the NASA Project Manager shall identify which records and software tools need to be archived, where they will be stored, and how the team can access them later.",
+      "SWE ID": "SWE-196",
+      "NPR Clause": "4.6.6",
+      "Ground Truth Label": "Compliant",
+      "Gap Type": "",
+      "Auditor Rationale (why compliant / what's missing)": "The requirement identifies what to archive, where to store it, and how to access it after the software is retired."
+    }
+  ]
+}

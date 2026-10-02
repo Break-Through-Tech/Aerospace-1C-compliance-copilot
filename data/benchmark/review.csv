@@ -1,0 +1,51 @@
+requirement_id,source_id,source_label,original_wording_review,final_verdict,text_changed,review_note
+NASA-SR-001,NASA-SR-001,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-002,NASA-SR-002,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-003,NASA-SR-003,Compliant,Partial,Meets,true,"Covers every Class B relationship in Table 1, including hazards and non-conformances."
+NASA-SR-004,NASA-SR-004,Compliant,Partial,Meets,true,Requires every listed requirements-management action and makes the technical-specification role explicit.
+NASA-SR-005,NASA-SR-005,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-006,NASA-SR-006,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-007,NASA-SR-007,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-008,NASA-SR-008,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-009,NASA-SR-009,Compliant,Partial,Meets,true,Includes both phases and all four minimum analysis purposes in the clause.
+NASA-SR-010,NASA-SR-010,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-011,NASA-SR-011,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-012,NASA-SR-012,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-013,NASA-SR-013,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-014,NASA-SR-014,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-015,NASA-SR-015,Compliant,Partial,Meets,true,"Includes hazardous events, causes, and mitigation techniques, with verification through test."
+NASA-SR-016,NASA-SR-016,Compliant,Partial,Meets,true,"Includes Agency policy, project requirements, and risks from third-party or reused software."
+NASA-SR-017,NASA-SR-017,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-018,NASA-SR-018,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-019,NASA-SR-019,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-020,NASA-SR-020,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-021,NASA-SR-021,Compliant,Partial,Meets,true,"Covers all five artifact categories in items a through e, with both performance and reporting."
+NASA-SR-022,NASA-SR-022,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-023,NASA-SR-023,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-024,NASA-SR-024,Gap,Partial,Partial,true,Implements categories but leaves their severity criteria undefined; the clause requires clear levels.
+NASA-SR-025,NASA-SR-025,Compliant,Meets,Meets,true,Explicitly covers all six conditions without naming the expected SWE ID inside the example.
+NASA-SR-026,NASA-SR-026,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-027,NASA-SR-027,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-028,NASA-SR-028,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-029,NASA-SR-029,Compliant,Partial,Meets,true,Explicitly assesses contributing processes and closes corrective actions for every high-severity case.
+NASA-SR-030,NASA-SR-030,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-031,NASA-SR-31,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-032,NASA-SR-32,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-033,NASA-SR-33,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-034,NASA-SR-34,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-035,NASA-SR-35,Compliant,Meets,Meets,true,"Plans, tracks, and ensures project-specific training across the stated project-personnel scope."
+NASA-SR-036,NASA-SR-36,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-037,NASA-SR-37,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-038,NASA-SR-38,Compliant,Partial,Meets,true,Defines clear criteria and implements levels across every listed applicable component category.
+NASA-SR-039,NASA-SR-39,Gap,Partial,Partial,false,Original wording retained; clause coverage reviewed.
+NASA-SR-040,NASA-SR-40,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-041,NASA-SR-41,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-042,NASA-SR-42,Compliant,Gap,Meets,true,"Identifies approved directive tailoring rather than ordinary software-product changes, and records it in controlling plans or procedures."
+NASA-SR-043,NASA-SR-43,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-044,NASA-SR-44,Compliant,Partial,Meets,true,Both tests and records results for the required mitigations derived from the specified analysis.
+NASA-SR-045,NASA-SR-45,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.
+NASA-SR-046,NASA-SR-46,Gap,Partial,Gap,true,"Expressly allows inconsistent procedures, contradicting the required consistency of plans and procedures."
+NASA-SR-047,NASA-SR-47,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-048,NASA-SR-48,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-049,NASA-SR-49,Gap,Gap,Gap,false,Original wording retained; clause coverage reviewed.
+NASA-SR-050,NASA-SR-50,Compliant,Meets,Meets,false,Original wording retained; clause coverage reviewed.

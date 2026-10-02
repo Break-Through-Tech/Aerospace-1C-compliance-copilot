@@ -1,0 +1,33 @@
+{
+  "dataset_name": "Compliance Copilot synthetic benchmark",
+  "review_date": "2026-10-01",
+  "timezone": "America/Los_Angeles",
+  "row_count": 50,
+  "unique_swe_ids": 44,
+  "source_label_counts": {
+    "Compliant": 28,
+    "Gap": 22
+  },
+  "verdict_counts": {
+    "Meets": 28,
+    "Gap": 12,
+    "Partial": 10
+  },
+  "revised_text_count": 14,
+  "normalized_id_count": 20,
+  "source_url": "https://docs.google.com/spreadsheets/d/1uFHTLkBYmrktTkqfwUdFjSMYvDdwiHC61SiBqQt2r5w/edit",
+  "source_document": "NPR 7150.2D",
+  "source_pdf": "data/npr-7150-2d.pdf",
+  "source_pdf_sha256": "1a5b7f9b0b0141e88374adf7a21a4d6ced0b29c221ca89a0a514f495d6532802",
+  "source_pdf_verified_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf",
+  "source_html": "data/npr-7150-2d-swehb.html",
+  "source_html_sha256": "b1b416a7b44f3f404f4ab88fe54e8d174e38150f6c5180594230dd0f922e608c",
+  "source_repo_commit": "ffe5ea0",
+  "review_method": "Inspection of all original rows against complete NASA clauses, with explicit wording revisions; team review pending.",
+  "files": {
+    "source.json": "74a598c33207a9d5634ce631eb9f6220ab4d7fee09c3f39a7051789949111e9b",
+    "clauses.json": "795836d8a990b6411060e0f6729a9697aad39934f8d061e4aaf55051e8cb82fb",
+    "requirements.csv": "1fc2bbfd6773bbb9de82be43bb01be9878ccb72dce5f74a8e16670bec0b2d047",
+    "review.csv": "ce8e88d31cbf61ebb8b3984b616cfb89e36dc045e5493c7b8aa9dd0d862f1d1f"
+  }
+}
