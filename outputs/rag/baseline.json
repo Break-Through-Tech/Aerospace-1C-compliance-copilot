@@ -1,0 +1,693 @@
+{
+  "config": {
+    "model": "Qwen/Qwen2.5-3B-Instruct",
+    "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "top_k": 5,
+    "do_sample": false,
+    "max_new_tokens": 768,
+    "device": "mps",
+    "python": "3.12.13",
+    "packages": {
+      "torch": "2.14.1",
+      "transformers": "4.57.6",
+      "sentence-transformers": "5.7.0",
+      "faiss-cpu": "1.15.1",
+      "pydantic": "2.13.5"
+    }
+  },
+  "input_sha256": {
+    "data/benchmark/requirements.csv": "1fc2bbfd6773bbb9de82be43bb01be9878ccb72dce5f74a8e16670bec0b2d047",
+    "data/benchmark/clauses.json": "795836d8a990b6411060e0f6729a9697aad39934f8d061e4aaf55051e8cb82fb",
+    "data/npr-7150-2d-requirements.csv": "bbea7241d65865048a318e61720e309cfd5e2e007e1a4be2c9e63a6e2b04cf96",
+    "compliance_copilot/pipeline.py": "0f4718e474c9a6afacb603ddf0ee7fe1af2015e5304f00156e4203a6d65624dc"
+  },
+  "results": [
+    {
+      "requirement_id": "NASA-SR-001",
+      "requirement_text": "The NASA Project Manager shall develop, maintain, and execute a Software Development Plan and a Software Security Plan covering the full software life cycle from requirements through retirement, addressing every applicable requirement of NPR 7150.2D per the approved Requirements Mapping Matrix.",
+      "status": "error",
+      "audit": null,
+      "error_code": "invalid_output",
+      "error_message": "Model response failed the audit JSON schema",
+      "retrieved": [
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.736359715461731
+        },
+        {
+          "swe_id": "SWE-022",
+          "section": "3.6.1",
+          "requirement_text": "The project manager shall plan and implement software assurance, software safety, and IV&V (if required) per NASA-STD-8739.8, Software Assurance and Software Safety Standard.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 2,
+          "score": 0.7237217426300049
+        },
+        {
+          "swe_id": "SWE-206",
+          "section": "3.8.2",
+          "requirement_text": "The project manager shall require the software developers and custom software suppliers to provide NASA with electronic access to the models, simulations, and associated data used as inputs for auto-generation of software.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.7160158157348633
+        },
+        {
+          "swe_id": "SWE-023",
+          "section": "3.7.2",
+          "requirement_text": "If a project has safety-critical software, the project manager shall implement the safety-critical software requirements contained in NASA-STD-8739.8.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 4,
+          "score": 0.7118097543716431
+        },
+        {
+          "swe_id": "SWE-125",
+          "section": "3.1.13",
+          "requirement_text": "Each project manager with software components shall maintain a requirements mapping matrix or multiple requirements mapping matrices against requirements in this NPR, including those delegated to other parties or accomplished by contract vehicles or Space Act Agreements.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.7003305554389954
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Gap\",\n    \"reasoning\": \"The requirement does not cover the development and maintenance of a Software Development Plan and a Software Security Plan, nor does it specify that these plans should address every applicable requirement of NPR 7150.2D per the approved Requirements Mapping Matrix. The provided clauses focus on software assurance, software safety, and traceability, which are not directly related to the creation and maintenance of the required plans.\",\n    \"citations\": []\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-002",
+      "requirement_text": "The NASA software shall meet performance expectations as determined by the development team prior to delivery.",
+      "status": "error",
+      "audit": null,
+      "error_code": "invalid_output",
+      "error_message": "Model response failed the audit JSON schema",
+      "retrieved": [
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.6759763360023499
+        },
+        {
+          "swe_id": "SWE-004",
+          "section": "2.1.1.2",
+          "requirement_text": "The NASA OCE shall periodically benchmark each Center’s software engineering capability against requirements in this directive.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 2,
+          "score": 0.6737029552459717
+        },
+        {
+          "swe_id": "SWE-002",
+          "section": "2.1.1.1",
+          "requirement_text": "The NASA OCE shall lead and maintain a NASA Software Engineering Initiative to advance software engineering practices.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.6589710712432861
+        },
+        {
+          "swe_id": "SWE-206",
+          "section": "3.8.2",
+          "requirement_text": "The project manager shall require the software developers and custom software suppliers to provide NASA with electronic access to the models, simulations, and associated data used as inputs for auto-generation of software.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 4,
+          "score": 0.6520465612411499
+        },
+        {
+          "swe_id": "SWE-209",
+          "section": "2.1.2.3",
+          "requirement_text": "The NASA Chief, SMA shall periodically benchmark each Center’s software assurance and software safety capabilities against the NASA-STD-8739.8, NASA Software Assurance and Software Safety Standard.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.6458863019943237
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Gap\",\n    \"reasoning\": \"The requirement does not align with any of the provided clauses. None of the clauses cover performance expectations or any related mandatory aspects.\",\n    \"citations\": []\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-003",
+      "requirement_text": "For Class B software, the NASA Project Manager shall perform, record, and maintain bidirectional traceability between higher-level and software requirements, software requirements and system hazards, software requirements and design components, design components and code, software requirements and software verifications, and software requirements and software non-conformances. The traceability records shall be updated within five business days of a requirement change.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Gap",
+        "reasoning": "The requirement specifies bidirectional traceability between various software elements, which is covered by the clause SWE-052. However, the requirement also mentions updating traceability records within five business days of a requirement change, which is not addressed in the clause. Additionally, the clause does not mention the update frequency of the traceability records.",
+        "citations": [
+          {
+            "swe_id": "SWE-052",
+            "section": "3.12.1",
+            "quote": "3.12.1 The project manager shall perform, record, and maintain bi-directional traceability between the following software elements: [SWE-052] Table 1. Bi-directional traceability by software classification Bi-directional Traceability Class A, B, and C Class D Class F Higher-level requirements to the software requirements X X Software requirements to the system hazards X X Software requirements to the software design components X Software design components to the software code X Software requirements to the software verification(s) X X X Software requirements to the software non-conformances X X X"
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-052",
+          "section": "3.12.1",
+          "requirement_text": "3.12.1 The project manager shall perform, record, and maintain bi-directional traceability between the following software elements: [SWE-052] Table 1. Bi-directional traceability by software classification Bi-directional Traceability Class A, B, and C Class D Class F Higher-level requirements to the software requirements X X Software requirements to the system hazards X X Software requirements to the software design components X Software design components to the software code X Software requirements to the software verification(s) X X X Software requirements to the software non-conformances X X X",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=31",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.735258936882019
+        },
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 2,
+          "score": 0.7330265045166016
+        },
+        {
+          "swe_id": "SWE-023",
+          "section": "3.7.2",
+          "requirement_text": "If a project has safety-critical software, the project manager shall implement the safety-critical software requirements contained in NASA-STD-8739.8.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.6487650275230408
+        },
+        {
+          "swe_id": "SWE-094",
+          "section": "5.4.4",
+          "requirement_text": "The project manager shall provide access to the software measurement data, measurement analyses, and software development status as requested to the sponsoring Mission Directorate, the NASA Chief Engineer, the Center Technical Authorities, HQ SMA, and other organizations as appropriate.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 4,
+          "score": 0.6391673684120178
+        },
+        {
+          "swe_id": "SWE-206",
+          "section": "3.8.2",
+          "requirement_text": "The project manager shall require the software developers and custom software suppliers to provide NASA with electronic access to the models, simulations, and associated data used as inputs for auto-generation of software.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.6391669511795044
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Gap\",\n    \"reasoning\": \"The requirement specifies bidirectional traceability between various software elements, which is covered by the clause SWE-052. However, the requirement also mentions updating traceability records within five business days of a requirement change, which is not addressed in the clause. Additionally, the clause does not mention the update frequency of the traceability records.\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-052\",\n            \"section\": \"3.12.1\",\n            \"quote\": \"3.12.1 The project manager shall perform, record, and maintain bi-directional traceability between the following software elements: [SWE-052] Table 1. Bi-directional traceability by software classification Bi-directional Traceability Class A, B, and C Class D Class F Higher-level requirements to the software requirements X X Software requirements to the system hazards X X Software requirements to the software design components X Software design components to the software code X Software requirements to the software verification(s) X X X Software requirements to the software non-conformances X X X\"\n        }\n    ]\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-004",
+      "requirement_text": "The NASA Project Manager shall establish, capture, record, approve, and maintain software requirements, including requirements for the reused GPS ephemeris library, in the DOORS requirements repository as part of the project technical specification.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Meets",
+        "reasoning": "The requirement is fully covered by the selected clauses. It meets the obligations of establishing, capturing, recording, approving, and maintaining software requirements (SWE-050), tracking and managing changes to the software requirements (SWE-053), and providing electronic access to the source code (SWE-042). The requirement also mentions the reuse of GPS ephemeris library, which is implicitly covered under the general requirements for software components (SWE-050).",
+        "citations": [
+          {
+            "swe_id": "SWE-050",
+            "section": "4.1.2",
+            "quote": "The project manager shall establish, capture, record, approve, and maintain software requirements, including requirements for COTS, GOTS, MOTS, OSS, or reused software components, as part of the technical specification."
+          },
+          {
+            "swe_id": "SWE-053",
+            "section": "4.1.5",
+            "quote": "The project manager shall track and manage changes to the software requirements."
+          },
+          {
+            "swe_id": "SWE-042",
+            "section": "3.1.10",
+            "quote": "The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format."
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.715893030166626
+        },
+        {
+          "swe_id": "SWE-206",
+          "section": "3.8.2",
+          "requirement_text": "The project manager shall require the software developers and custom software suppliers to provide NASA with electronic access to the models, simulations, and associated data used as inputs for auto-generation of software.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 2,
+          "score": 0.7044186592102051
+        },
+        {
+          "swe_id": "SWE-050",
+          "section": "4.1.2",
+          "requirement_text": "4.1.2 The project manager shall establish, capture, record, approve, and maintain software requirements, including requirements for COTS, GOTS, MOTS, OSS, or reused software components, as part of the technical specification. [SWE-050]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=32",
+          "text_scope": "reviewed_full_text",
+          "rank": 3,
+          "score": 0.6842644214630127
+        },
+        {
+          "swe_id": "SWE-042",
+          "section": "3.1.10",
+          "requirement_text": "3.1.10 The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format. [SWE-042]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 4,
+          "score": 0.6560497283935547
+        },
+        {
+          "swe_id": "SWE-053",
+          "section": "4.1.5",
+          "requirement_text": "4.1.5 The project manager shall track and manage changes to the software requirements. [SWE-053]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=32",
+          "text_scope": "reviewed_full_text",
+          "rank": 5,
+          "score": 0.6485569477081299
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Meets\",\n    \"reasoning\": \"The requirement is fully covered by the selected clauses. It meets the obligations of establishing, capturing, recording, approving, and maintaining software requirements (SWE-050), tracking and managing changes to the software requirements (SWE-053), and providing electronic access to the source code (SWE-042). The requirement also mentions the reuse of GPS ephemeris library, which is implicitly covered under the general requirements for software components (SWE-050).\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-050\",\n            \"section\": \"4.1.2\",\n            \"quote\": \"The project manager shall establish, capture, record, approve, and maintain software requirements, including requirements for COTS, GOTS, MOTS, OSS, or reused software components, as part of the technical specification.\"\n        },\n        {\n            \"swe_id\": \"SWE-053\",\n            \"section\": \"4.1.5\",\n            \"quote\": \"The project manager shall track and manage changes to the software requirements.\"\n        },\n        {\n            \"swe_id\": \"SWE-042\",\n            \"section\": \"3.1.10\",\n            \"quote\": \"The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format.\"\n        }\n    ]\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-005",
+      "requirement_text": "Changes to NASA software requirements shall be logged in the issue tracker by the engineer making the change.",
+      "status": "error",
+      "audit": null,
+      "error_code": "invalid_output",
+      "error_message": "Model response failed the audit JSON schema",
+      "retrieved": [
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.6786707639694214
+        },
+        {
+          "swe_id": "SWE-053",
+          "section": "4.1.5",
+          "requirement_text": "4.1.5 The project manager shall track and manage changes to the software requirements. [SWE-053]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=32",
+          "text_scope": "reviewed_full_text",
+          "rank": 2,
+          "score": 0.6590766310691833
+        },
+        {
+          "swe_id": "SWE-023",
+          "section": "3.7.2",
+          "requirement_text": "If a project has safety-critical software, the project manager shall implement the safety-critical software requirements contained in NASA-STD-8739.8.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.6164538264274597
+        },
+        {
+          "swe_id": "SWE-042",
+          "section": "3.1.10",
+          "requirement_text": "3.1.10 The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format. [SWE-042]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 4,
+          "score": 0.6052557229995728
+        },
+        {
+          "swe_id": "SWE-216",
+          "section": "2.1.5.14",
+          "requirement_text": "The Center Director, or designee, shall ensure that all software listed on the internal software sharing or reuse catalog(s) conforms to NASA software engineering policy and requirements.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.6050966382026672
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Gap\",\n    \"reasoning\": \"The requirement does not align with any of the provided clauses. None of the clauses cover the logging of changes to software requirements in an issue tracker by the engineer making the change. The clauses focus on providing software products, managing changes, ensuring safety-critical software requirements, providing electronic access to source code, and cataloging software. There is no mention of logging changes to requirements in the given references.\",\n    \"citations\": []\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-006",
+      "requirement_text": "The NASA Project Manager shall perform requirements validation with the customer, including scenario-based walkthroughs and a requirements review board, to confirm the software will perform as intended in the lunar relay operational environment prior to baselining.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Meets",
+        "reasoning": "The requirement covers the mandatory aspects of performing requirements validation with the customer, including scenario-based walkthroughs and a requirements review board, which aligns with the clause SWE-055. This ensures the software will perform as intended in the customer environment.",
+        "citations": [
+          {
+            "swe_id": "SWE-055",
+            "section": "4.1.7",
+            "quote": "4.1.7 The project manager shall perform requirements validation to ensure that the software will perform as intended in the customer environment."
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-055",
+          "section": "4.1.7",
+          "requirement_text": "4.1.7 The project manager shall perform requirements validation to ensure that the software will perform as intended in the customer environment. [SWE-055]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=32",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.7105579376220703
+        },
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 2,
+          "score": 0.6383860111236572
+        },
+        {
+          "swe_id": "SWE-192",
+          "section": "4.5.12",
+          "requirement_text": "4.5.12 The project manager shall verify through test the software requirements that trace to a hazardous event, cause, or mitigation technique. [SWE-192]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=37",
+          "text_scope": "reviewed_full_text",
+          "rank": 3,
+          "score": 0.6383146047592163
+        },
+        {
+          "swe_id": "SWE-066",
+          "section": "4.5.3",
+          "requirement_text": "4.5.3 The project manager shall test the software against its requirements. [SWE-066]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=35",
+          "text_scope": "reviewed_full_text",
+          "rank": 4,
+          "score": 0.6332405805587769
+        },
+        {
+          "swe_id": "SWE-023",
+          "section": "3.7.2",
+          "requirement_text": "If a project has safety-critical software, the project manager shall implement the safety-critical software requirements contained in NASA-STD-8739.8.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.6262071132659912
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Meets\",\n    \"reasoning\": \"The requirement covers the mandatory aspects of performing requirements validation with the customer, including scenario-based walkthroughs and a requirements review board, which aligns with the clause SWE-055. This ensures the software will perform as intended in the customer environment.\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-055\",\n            \"section\": \"4.1.7\",\n            \"quote\": \"4.1.7 The project manager shall perform requirements validation to ensure that the software will perform as intended in the customer environment.\"\n        }\n    ]\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-007",
+      "requirement_text": "The NASA Project Manager shall transform the approved software requirements into a recorded software architecture, documented in the Software Architecture Description Document (SADD) and baselined under configuration management prior to detailed design.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Meets",
+        "reasoning": "The requirement is fully covered by the clause SWE-057, which mandates that the project manager shall transform the requirements for the software into a recorded software architecture. This requirement aligns with the need to document the software architecture in the Software Architecture Description Document (SADD).",
+        "citations": [
+          {
+            "swe_id": "SWE-057",
+            "section": "4.2.3",
+            "quote": "4.2.3 The project manager shall transform the requirements for the software into a recorded software architecture."
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-057",
+          "section": "4.2.3",
+          "requirement_text": "4.2.3 The project manager shall transform the requirements for the software into a recorded software architecture. [SWE-057]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=33",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.771858811378479
+        },
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 2,
+          "score": 0.7270988821983337
+        },
+        {
+          "swe_id": "SWE-206",
+          "section": "3.8.2",
+          "requirement_text": "The project manager shall require the software developers and custom software suppliers to provide NASA with electronic access to the models, simulations, and associated data used as inputs for auto-generation of software.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.7047929763793945
+        },
+        {
+          "swe_id": "SWE-023",
+          "section": "3.7.2",
+          "requirement_text": "If a project has safety-critical software, the project manager shall implement the safety-critical software requirements contained in NASA-STD-8739.8.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 4,
+          "score": 0.6913194060325623
+        },
+        {
+          "swe_id": "SWE-058",
+          "section": "4.3.2",
+          "requirement_text": "The project manager shall develop, record, and maintain a software design based on the software architectural design that describes the lower-level units so that they can be coded, compiled, and tested.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.6865693926811218
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Meets\",\n    \"reasoning\": \"The requirement is fully covered by the clause SWE-057, which mandates that the project manager shall transform the requirements for the software into a recorded software architecture. This requirement aligns with the need to document the software architecture in the Software Architecture Description Document (SADD).\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-057\",\n            \"section\": \"4.2.3\",\n            \"quote\": \"4.2.3 The project manager shall transform the requirements for the software into a recorded software architecture.\"\n        }\n    ]\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-008",
+      "requirement_text": "NASA software developers shall write clean, maintainable code following good engineering judgment.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Gap",
+        "reasoning": "The provided requirement does not cover any mandatory aspects of the selected clauses. All relevant clauses pertain to leadership and maintenance of initiatives rather than direct guidance on writing clean, maintainable code.",
+        "citations": [
+          {
+            "swe_id": "SWE-002",
+            "section": "2.1.1.1",
+            "quote": "The NASA OCE shall lead and maintain a NASA Software Engineering Initiative to advance software engineering practices."
+          },
+          {
+            "swe_id": "SWE-042",
+            "section": "3.1.10",
+            "quote": "The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format."
+          },
+          {
+            "swe_id": "SWE-208",
+            "section": "2.1.2.2",
+            "quote": "The NASA Chief, SMA shall lead and maintain a NASA Software Assurance and Software Safety Initiative to advance software assurance and software safety practices."
+          },
+          {
+            "swe_id": "SWE-040",
+            "section": "3.1.9",
+            "quote": "The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics."
+          },
+          {
+            "swe_id": "SWE-216",
+            "section": "2.1.5.14",
+            "quote": "The Center Director, or designee, shall ensure that all software listed on the internal software sharing or reuse catalog(s) conforms to NASA software engineering policy and requirements."
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-002",
+          "section": "2.1.1.1",
+          "requirement_text": "The NASA OCE shall lead and maintain a NASA Software Engineering Initiative to advance software engineering practices.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 1,
+          "score": 0.732319712638855
+        },
+        {
+          "swe_id": "SWE-042",
+          "section": "3.1.10",
+          "requirement_text": "3.1.10 The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format. [SWE-042]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 2,
+          "score": 0.6581852436065674
+        },
+        {
+          "swe_id": "SWE-208",
+          "section": "2.1.2.2",
+          "requirement_text": "The NASA Chief, SMA shall lead and maintain a NASA Software Assurance and Software Safety Initiative to advance software assurance and software safety practices.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.6564549207687378
+        },
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 4,
+          "score": 0.6507795453071594
+        },
+        {
+          "swe_id": "SWE-216",
+          "section": "2.1.5.14",
+          "requirement_text": "The Center Director, or designee, shall ensure that all software listed on the internal software sharing or reuse catalog(s) conforms to NASA software engineering policy and requirements.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 5,
+          "score": 0.6344265937805176
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Gap\",\n    \"reasoning\": \"The provided requirement does not cover any mandatory aspects of the selected clauses. All relevant clauses pertain to leadership and maintenance of initiatives rather than direct guidance on writing clean, maintainable code.\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-002\",\n            \"section\": \"2.1.1.1\",\n            \"quote\": \"The NASA OCE shall lead and maintain a NASA Software Engineering Initiative to advance software engineering practices.\"\n        },\n        {\n            \"swe_id\": \"SWE-042\",\n            \"section\": \"3.1.10\",\n            \"quote\": \"The project manager shall require the software developer(s) to provide NASA with electronic access to the source code developed for the project in a modifiable format.\"\n        },\n        {\n            \"swe_id\": \"SWE-208\",\n            \"section\": \"2.1.2.2\",\n            \"quote\": \"The NASA Chief, SMA shall lead and maintain a NASA Software Assurance and Software Safety Initiative to advance software assurance and software safety practices.\"\n        },\n        {\n            \"swe_id\": \"SWE-040\",\n            \"section\": \"3.1.9\",\n            \"quote\": \"The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics.\"\n        },\n        {\n            \"swe_id\": \"SWE-216\",\n            \"section\": \"2.1.5.14\",\n            \"quote\": \"The Center Director, or designee, shall ensure that all software listed on the internal software sharing or reuse catalog(s) conforms to NASA software engineering policy and requirements.\"\n        }\n    ]\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-009",
+      "requirement_text": "The NASA Project Manager shall use static analysis tools during development and testing to analyze code for defects, software security, code coverage, and software complexity, and shall track identified findings to closure in the defect tracking system.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Meets",
+        "reasoning": "The requirement covers all mandatory aspects of the selected clause(s). It specifies the use of static analysis tools to analyze code for defects, software security, code coverage, and software complexity, which aligns with the clause SWE-135. Additionally, it mentions tracking identified findings to closure in the defect tracking system, which is covered by SWE-201.",
+        "citations": [
+          {
+            "swe_id": "SWE-135",
+            "section": "4.4.4",
+            "quote": "4.4.4 The project manager shall use static analysis tools to analyze the code during the development and testing phases to, at a minimum, detect defects, software security, code coverage, and software complexity."
+          },
+          {
+            "swe_id": "SWE-201",
+            "section": "5.5.1",
+            "quote": "5.5.1 The project manager shall track and maintain software non-conformances (including defects in tools and appropriate ground software)."
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-135",
+          "section": "4.4.4",
+          "requirement_text": "4.4.4 The project manager shall use static analysis tools to analyze the code during the development and testing phases to, at a minimum, detect defects, software security, code coverage, and software complexity. [SWE-135]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=34",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.8376366496086121
+        },
+        {
+          "swe_id": "SWE-040",
+          "section": "3.1.9",
+          "requirement_text": "3.1.9 The project manager shall require the software developer(s) to provide NASA with software products, traceability, software change tracking information, and nonconformances in electronic format, including software development and management metrics. [SWE-040]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=21",
+          "text_scope": "reviewed_full_text",
+          "rank": 2,
+          "score": 0.7156097888946533
+        },
+        {
+          "swe_id": "SWE-201",
+          "section": "5.5.1",
+          "requirement_text": "5.5.1 The project manager shall track and maintain software non-conformances (including defects in tools and appropriate ground software). [SWE-201]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=42",
+          "text_scope": "reviewed_full_text",
+          "rank": 3,
+          "score": 0.6856677532196045
+        },
+        {
+          "swe_id": "SWE-185",
+          "section": "3.11.7",
+          "requirement_text": "The project manager shall verify that the software code meets the project’s secure coding standard by using the results from static analysis tool(s).",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 4,
+          "score": 0.6731644868850708
+        },
+        {
+          "swe_id": "SWE-192",
+          "section": "4.5.12",
+          "requirement_text": "4.5.12 The project manager shall verify through test the software requirements that trace to a hazardous event, cause, or mitigation technique. [SWE-192]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=37",
+          "text_scope": "reviewed_full_text",
+          "rank": 5,
+          "score": 0.6669629812240601
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Meets\",\n    \"reasoning\": \"The requirement covers all mandatory aspects of the selected clause(s). It specifies the use of static analysis tools to analyze code for defects, software security, code coverage, and software complexity, which aligns with the clause SWE-135. Additionally, it mentions tracking identified findings to closure in the defect tracking system, which is covered by SWE-201.\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-135\",\n            \"section\": \"4.4.4\",\n            \"quote\": \"4.4.4 The project manager shall use static analysis tools to analyze the code during the development and testing phases to, at a minimum, detect defects, software security, code coverage, and software complexity.\"\n        },\n        {\n            \"swe_id\": \"SWE-201\",\n            \"section\": \"5.5.1\",\n            \"quote\": \"5.5.1 The project manager shall track and maintain software non-conformances (including defects in tools and appropriate ground software).\"\n        }\n    ]\n}"
+    },
+    {
+      "requirement_id": "NASA-SR-010",
+      "requirement_text": "The NASA Project Manager shall unit test each software code unit against its detailed design prior to integration, and shall record unit test results in the test management system.",
+      "status": "ok",
+      "audit": {
+        "verdict": "Gap",
+        "reasoning": "The requirement mentions unit testing each software code unit against its detailed design and recording unit test results, which is covered by SWE-062. However, it does not mention the recording of unit test results in a test management system, which is not addressed by any of the provided clauses.",
+        "citations": [
+          {
+            "swe_id": "SWE-062",
+            "section": "4.4.5",
+            "quote": "The project manager shall unit test the software code."
+          }
+        ]
+      },
+      "error_code": null,
+      "error_message": null,
+      "retrieved": [
+        {
+          "swe_id": "SWE-062",
+          "section": "4.4.5",
+          "requirement_text": "4.4.5 The project manager shall unit test the software code. [SWE-062]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=34",
+          "text_scope": "reviewed_full_text",
+          "rank": 1,
+          "score": 0.7955000400543213
+        },
+        {
+          "swe_id": "SWE-094",
+          "section": "5.4.4",
+          "requirement_text": "The project manager shall provide access to the software measurement data, measurement analyses, and software development status as requested to the sponsoring Mission Directorate, the NASA Chief Engineer, the Center Technical Authorities, HQ SMA, and other organizations as appropriate.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 2,
+          "score": 0.7004798054695129
+        },
+        {
+          "swe_id": "SWE-189",
+          "section": "4.5.9",
+          "requirement_text": "The project manager shall ensure that the code coverage measurements for the software are selected, implemented, tracked, recorded, and reported.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 3,
+          "score": 0.6801084876060486
+        },
+        {
+          "swe_id": "SWE-190",
+          "section": "4.5.10",
+          "requirement_text": "The project manager shall verify code coverage is measured by analysis of the results of the execution of tests.",
+          "source_url": "https://swehb.nasa.gov/spaces/SITE/pages/123601159/NPR%2B7150.2D",
+          "text_scope": "parsed_excerpt",
+          "rank": 4,
+          "score": 0.6676506996154785
+        },
+        {
+          "swe_id": "SWE-066",
+          "section": "4.5.3",
+          "requirement_text": "4.5.3 The project manager shall test the software against its requirements. [SWE-066]",
+          "source_url": "https://explorers.larc.nasa.gov/APSMEX26/SMEX/pdf_files/NASA21_NPR_7150_2D.pdf#page=35",
+          "text_scope": "reviewed_full_text",
+          "rank": 5,
+          "score": 0.6659473776817322
+        }
+      ],
+      "raw_output": "{\n    \"verdict\": \"Gap\",\n    \"reasoning\": \"The requirement mentions unit testing each software code unit against its detailed design and recording unit test results, which is covered by SWE-062. However, it does not mention the recording of unit test results in a test management system, which is not addressed by any of the provided clauses.\",\n    \"citations\": [\n        {\n            \"swe_id\": \"SWE-062\",\n            \"section\": \"4.4.5\",\n            \"quote\": \"The project manager shall unit test the software code.\"\n        }\n    ]\n}"
+    }
+  ]
+}

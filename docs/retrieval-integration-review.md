@@ -26,3 +26,13 @@ The first two benchmark planning examples did not retrieve their assigned clause
 - Reject missing metadata, duplicate SWE IDs, and conflicting section numbers at the audit boundary. An empty result becomes `no_context`.
 
 On this macOS environment, default native OpenMP worker pools crashed during batch embedding. Setting `OMP_NUM_THREADS=1` before native imports resolved the crash. The standalone retriever applies that default on macOS; notebook users who already imported the libraries should restart their kernel.
+
+## Follow-up quality fixes
+
+The standalone path now normalizes agency qualifiers out of embedding input while preserving NASA as a recipient or office-name component and supplies ten candidates. Original query and source text stay intact. The original DataFrame adapter is still supported, and `normalize_agency=False` retains legacy standalone preprocessing.
+
+On the first ten development cases, original MiniLM retrieval found 7/10 assigned clauses at top five. Agency normalization found 9/10 at top five and 10/10 at top ten. Replacing parsed embedding text with complete clauses, swapping the embedding model, or adding a cross-encoder did not improve this small development check enough to justify extra complexity. The final change keeps Nam's model and FAISS index.
+
+See `rag-quality-check.md` for the broader check and remaining cases. These are measured development results, not a guarantee that preprocessing will improve every future query.
+
+The full-corpus check exposed a regression from removing every NASA token: source-code delivery to NASA fell from rank 1 to rank 14. Restricting normalization to the qualifiers in NASA project, NASA software, and NASA unit fixed that case. With this correction, the assigned clause appears in the top five for 47/50 examples and in the top ten for all 50. `scripts/compare_retrieval.py` reproduces the comparison.

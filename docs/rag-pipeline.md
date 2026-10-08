@@ -1,31 +1,37 @@
 # RAG audit pipeline
 
-Task 2 connects Nam's FAISS retrieval interface to a fixed audit prompt and Pydantic output validation. It accepts a requirement ID and text, retrieves five NASA clauses, generates one response, and returns either a validated audit or an explicit error. There are no repair prompts or silent retries.
+The pipeline retrieves NASA clauses, compares their mandatory obligations with a proposed requirement, and returns a Pydantic-validated Meets, Partial, or Gap verdict. The model selects citation IDs; the application supplies exact source text and section numbers. Benchmark answers never enter model inputs.
 
 ## Run locally
 
-Use Python 3.10 or newer. A GPU is recommended; CUDA and Apple MPS are selected automatically, with CPU as a slower fallback. The first run downloads MiniLM and Qwen2.5-3B-Instruct from Hugging Face, about 6 GB of model weights. No inference API key is needed. On macOS the retriever defaults `OMP_NUM_THREADS` to 1 before importing native libraries to avoid the FAISS/PyTorch OpenMP crash observed during validation. In a notebook that already imported these libraries, restart the kernel or set this variable before starting Jupyter.
+Use Python 3.10 or newer. A GPU is recommended: CUDA or Apple MPS is selected automatically, with CPU as a slower fallback. The first run downloads MiniLM and Qwen3-4B-Instruct-2507, about 8 GB of model weights. No inference API key is needed.
+
+Run from the repository root. The saved run used uv and Python 3.12; an existing Python 3.10+ environment can instead install `requirements.txt` with pip.
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python scripts/run_rag_demo.py
+uv venv .venv-rag --python 3.12
+source .venv-rag/bin/activate
+uv pip install -r requirements.txt
+python scripts/run_rag_demo.py --output /tmp/audits.json
+python scripts/summarize_rag_run.py /tmp/audits.json
+python scripts/compare_retrieval.py --output /tmp/retrieval-comparison.json
 ```
 
-The default examples are the first ten benchmark rows, NASA-SR-001 through NASA-SR-010. Change `--ids` to choose other existing requirements. The output defaults to `outputs/rag/demo.json`; use `--output` to preserve the checked-in run. Exit status is 1 if any audit fails validation. Model loading and download errors stop the command without fabricating a report.
+The default examples are NASA-SR-001 through NASA-SR-010. Use `--ids` for selected requirements or `--all` for the full benchmark. The default output is `outputs/rag/demo.json`; pass a different `--output` to preserve the checked-in run. Exit status is 1 if any audit fails validation. Model loading or download errors stop the command without fabricating results.
 
-```bash
-python scripts/run_rag_demo.py --ids NASA-SR-003 NASA-SR-010 --output /tmp/audits.json
-python -m pip install pytest
-python -m pytest -q
-```
+[The demonstration notebook](../notebooks/RAG_Audit_Demo.ipynb) supports a local checkout and Colab. In Colab, select a GPU runtime before running setup. The notebook displays the saved run by default; set `RUN_MODEL = True` for fresh inference. Colab runtime execution has not been verified here.
 
-[The demonstration notebook](../notebooks/RAG_Audit_Demo.ipynb) supports a local checkout and Colab. In Colab, select a GPU runtime and run the setup cell before the remaining cells. The notebook displays the saved run by default. Set `RUN_MODEL = True` to generate a new run; this can take several minutes.
+On macOS, the retriever defaults `OMP_NUM_THREADS` to 1 before native imports to avoid a FAISS/PyTorch OpenMP crash observed during validation. If a notebook already imported those libraries, restart its kernel or set the variable before starting Jupyter.
 
 ## Retrieval integration
 
-`ClauseRetriever` accepts Nam's `retrieve_requirements(query, k=5)` callable, which returns a DataFrame with `rank`, `score`, `swe_id`, `section`, and `requirement_text`. In the shared notebook, after running his index cells:
+Nam's normalized MiniLM embeddings and FAISS inner-product index remain the retrieval backend. The standalone implementation is adapted from [f78f3ff](https://github.com/Break-Through-Tech/Aerospace-1C-compliance-copilot/commit/f78f3ff). The shared development notebook and evaluation work on main remain unchanged.
+
+The standalone index removes `NASA` when it qualifies `project`, `software`, or `unit` in document and query embedding input. In this NASA-only corpus, that shared qualifier was displacing the actual obligation: the two development planning examples retrieved their assigned clauses at ranks 8 and 21 before normalization, and ranks 1 and 3 afterward. NASA remains intact when it is a recipient, as in "provide NASA with source code," or part of an office name such as NASA OCE. Original text, roles, SWE IDs, section numbers, and citations are preserved. `build_retriever(ROOT, normalize_agency=False)` reproduces the original preprocessing; the CLI exposes this as `--legacy-retrieval`.
+
+The audit receives ten candidate clauses by default. Complete NASA references replace abbreviated retrieved text for the 44 reviewed SWE IDs, restoring required lists and the traceability table. Other records remain marked `parsed_excerpt`. Complete text is supplied after retrieval; embeddings still use the parsed corpus statements.
+
+`ClauseRetriever` also accepts Nam's original `retrieve_requirements(query, k)` DataFrame callable. This route retains whatever preprocessing its upstream index uses:
 
 ```python
 from compliance_copilot import AuditPipeline
@@ -33,39 +39,36 @@ from compliance_copilot.generation import LocalGenerator
 from compliance_copilot.retrieval import ClauseRetriever
 
 retriever = ClauseRetriever(retrieve_requirements, ROOT / "data/benchmark/clauses.json")
-pipeline = AuditPipeline(retriever, LocalGenerator(), top_k=5)
+pipeline = AuditPipeline(retriever, LocalGenerator(), top_k=10)
 result = pipeline.audit("example", "The project shall maintain software plans.")
 result.model_dump()
 ```
 
-`build_retriever(ROOT)` provides the same MiniLM normalized embeddings and FAISS inner-product search outside the notebook, ported from Nam's [f78f3ff](https://github.com/Break-Through-Tech/Aerospace-1C-compliance-copilot/commit/f78f3ff). It indexes the existing 130-row NASA CSV, never synthetic benchmark requirements. It leaves the shared development notebook unchanged so the evaluation work on main is preserved.
+## Verdict and citation contract
 
-After ranking, the adapter replaces abbreviated text with the complete NASA references in `data/benchmark/clauses.json` for 44 SWE IDs. This restores mandatory lists and the traceability table without feeding expected labels or rationales into the model. The other records are marked `parsed_excerpt`. Ranking remains based on the original parsed text, and different upstream parsing results can change retrieval.
+The comparison is directional: does the proposed requirement cover the mandatory NASA obligations? Additional implementation details, deadlines, or stronger commitments are allowed. Missing obligations lead to Partial or Gap; an express contradiction takes precedence over partial positive coverage. The prompt asks for the most directly relevant clause rather than treating every search hit as applicable.
 
-## Output contract
+The generator is a callable taking chat messages and returning JSON matching `AuditDecision`: `verdict`, `reasoning`, and a nonempty `cited_swe_ids` list. IDs must be unique and present in retrieved context. The generator cannot supply section numbers or quotes. Code constructs each final `Citation` from the selected record's exact section and complete source text. This prevents a paraphrased table from being presented as a verbatim quote.
 
-An `AuditResult` includes the input ID/text, status, retrieved records, raw response, and either an audit or an error. An audit contains:
+The public `AuditResult` contains the input ID/text, status, retrieved records, raw model response, and either an `AuditVerdict` or an error. An audit retains the original output contract: `verdict`, `reasoning`, and `citations` containing `swe_id`, `section`, and `quote`. Unknown model fields, empty ID lists, unsupported verdict labels, and malformed JSON fail validation. Errors have `audit: null` and one of `retrieval_error`, `no_context`, `generation_error`, `invalid_output`, or `invalid_citation`. There are no repair prompts or silent retries.
 
-- `verdict`: `Meets`, `Partial`, or `Gap`, following the benchmark Data Card.
-- `reasoning`: nonempty explanation of coverage, omissions, or contradictions.
-- `citations`: one or more unique SWE ID/section pairs, each with a quote from the retrieved text.
+Structural validity and source membership do not prove that the selected clause is applicable or the verdict is correct. A result citing a `parsed_excerpt` remains limited by incomplete source text. This is a textual baseline with assumed applicability, not a finding of operational compliance.
 
-Citation validation checks that each ID and section was retrieved and that the quoted text appears in that clause, allowing whitespace normalization. Unknown fields, empty citations, alternate labels, and malformed JSON fail validation. Failures have `audit: null` and one of `retrieval_error`, `no_context`, `generation_error`, `invalid_output`, or `invalid_citation`. Do not count an error as Gap or silently exclude it when evaluating coverage.
+## Verification and evaluation handoff
 
-Pydantic and quote checks validate structure and source membership. They do not prove that the selected clause is relevant, that reasoning is correct, or that the requirement meets NASA obligations. A successful result based on a `parsed_excerpt` remains limited by incomplete source text. This is a textual baseline with assumed applicability, not a finding of operational compliance.
+```bash
+python -m pip install pytest
+python -m pytest -q
+RUN_RETRIEVAL_TESTS=1 python -m pytest -q tests/test_rag_retrieval_integration.py
+RUN_MODEL_TESTS=1 python -m pytest -q tests/test_rag_model_integration.py
+```
 
-## Reproducibility and evaluation handoff
+The integration checks load real models. The retrieval checks cover the planning-clause displacement; the model checks cover the false Gap caused by additional traceability deadlines or test-recording details. Fast tests cover failure handling, citation source resolution, and metrics that keep errors in the denominator.
 
-The saved report records model and embedding revisions, input and prompt-file hashes, package versions, device, top-k, and generation settings. Greedy decoding avoids sampling but does not guarantee identical output across devices or library versions. Use `--model-revision` and `--embedding-revision` with the recorded hashes to rerun those revisions. The default resolves current model revisions and records them before loading.
+`summarize_rag_run.py` joins expected answers only after inference. It reports valid outputs, expected-clause retrieval and citation, verdict matches, and grounded verdict matches. A grounded match requires both the benchmark verdict and its assigned SWE ID in the citations. Correct labels citing a different clause do not count as grounded matches. The report is a benchmark comparison, not a substitute for human review of alternative applicable clauses.
 
-`AuditPipeline.audit` receives only the ID and requirement text. Expected SWE IDs, verdicts, gap types, and rationales are not provided to retrieval or generation. Evaluation code can join `results[*].requirement_id` back to the benchmark after inference. Report retrieval correctness, valid-output rate, citation validity, and verdict accuracy separately. The ten-example demonstration is a smoke test, not a precision/recall evaluation.
+Model/embedding revisions, package versions, device, top-k, normalization settings, and input/source-code hashes are recorded in each run. Greedy decoding removes sampling but does not guarantee identical results across devices or library versions. Use `--model-revision` and `--embedding-revision` with recorded hashes to reproduce the model selection.
 
-The generator is any callable taking chat messages and returning text. A different local or hosted backend can be injected without changing validation. The included backend uses the [Qwen model's Transformers interface](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), [SentenceTransformer encoding](https://sbert.net/docs/package_reference/sentence_transformer/model.html), and [Pydantic models](https://docs.pydantic.dev/latest/concepts/models/).
+The original run is retained in `outputs/rag/baseline.json`; its hashes refer to the files at commit `cc3473f`. See [the quality comparison](rag-quality-check.md) for before/after results and remaining errors. The first ten rows were used for initial development. The remaining forty were then reviewed to catch regressions and diagnose further errors. The resulting runs are development-benchmark checks, not an independent holdout.
 
-## Saved run
-
-The checked-in report covers the first ten benchmark rows with Qwen2.5-3B-Instruct on Apple MPS. Seven responses passed schema and citation validation. NASA-SR-001, NASA-SR-002, and NASA-SR-005 returned empty citations and were rejected as `invalid_output`. Five of the ten inputs produced a valid verdict matching the benchmark. NASA-SR-003 and NASA-SR-010 produced valid citations but incorrect Gap verdicts. All raw responses are retained.
-
-This run demonstrates working inference and failure handling, while exposing both retrieval misses and model reasoning errors. It is not a claim that the baseline is ready for compliance decisions. The separate evaluation task should measure the full benchmark and compare model/retrieval changes.
-
-Validation completed locally: 39 automated tests passed, the original 50-record benchmark passed its citation/hash checks, original Nam retrieval matched the adapter on both sample queries, and all five notebook code cells executed successfully. The notebook displayed and validated the saved run; the Colab setup path has not been executed in an authenticated Colab runtime.
+Technical references: [Qwen3 model interface](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507), [SentenceTransformer encoding](https://sbert.net/docs/package_reference/sentence_transformer/model.html), and [Pydantic models](https://docs.pydantic.dev/latest/concepts/models/).

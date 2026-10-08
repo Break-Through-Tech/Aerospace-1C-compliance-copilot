@@ -1,0 +1,132 @@
+{
+  "total": 10,
+  "counts": {
+    "valid_output": 7,
+    "expected_clause_retrieved": 7,
+    "expected_clause_cited": 6,
+    "verdict_matches": 5,
+    "grounded_verdict_matches": 4
+  },
+  "details": [
+    {
+      "requirement_id": "NASA-SR-001",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-013",
+      "predicted_verdict": null,
+      "valid_output": false,
+      "error_code": "invalid_output",
+      "expected_clause_retrieved": false,
+      "expected_clause_cited": false,
+      "verdict_matches": false,
+      "grounded_verdict_matches": false
+    },
+    {
+      "requirement_id": "NASA-SR-002",
+      "expected_verdict": "Gap",
+      "expected_swe_id": "SWE-034",
+      "predicted_verdict": null,
+      "valid_output": false,
+      "error_code": "invalid_output",
+      "expected_clause_retrieved": false,
+      "expected_clause_cited": false,
+      "verdict_matches": false,
+      "grounded_verdict_matches": false
+    },
+    {
+      "requirement_id": "NASA-SR-003",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-052",
+      "predicted_verdict": "Gap",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": true,
+      "verdict_matches": false,
+      "grounded_verdict_matches": false
+    },
+    {
+      "requirement_id": "NASA-SR-004",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-050",
+      "predicted_verdict": "Meets",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": true,
+      "verdict_matches": true,
+      "grounded_verdict_matches": true
+    },
+    {
+      "requirement_id": "NASA-SR-005",
+      "expected_verdict": "Partial",
+      "expected_swe_id": "SWE-053",
+      "predicted_verdict": null,
+      "valid_output": false,
+      "error_code": "invalid_output",
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": false,
+      "verdict_matches": false,
+      "grounded_verdict_matches": false
+    },
+    {
+      "requirement_id": "NASA-SR-006",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-055",
+      "predicted_verdict": "Meets",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": true,
+      "verdict_matches": true,
+      "grounded_verdict_matches": true
+    },
+    {
+      "requirement_id": "NASA-SR-007",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-057",
+      "predicted_verdict": "Meets",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": true,
+      "verdict_matches": true,
+      "grounded_verdict_matches": true
+    },
+    {
+      "requirement_id": "NASA-SR-008",
+      "expected_verdict": "Gap",
+      "expected_swe_id": "SWE-061",
+      "predicted_verdict": "Gap",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": false,
+      "expected_clause_cited": false,
+      "verdict_matches": true,
+      "grounded_verdict_matches": false
+    },
+    {
+      "requirement_id": "NASA-SR-009",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-135",
+      "predicted_verdict": "Meets",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": true,
+      "verdict_matches": true,
+      "grounded_verdict_matches": true
+    },
+    {
+      "requirement_id": "NASA-SR-010",
+      "expected_verdict": "Meets",
+      "expected_swe_id": "SWE-062",
+      "predicted_verdict": "Gap",
+      "valid_output": true,
+      "error_code": null,
+      "expected_clause_retrieved": true,
+      "expected_clause_cited": true,
+      "verdict_matches": false,
+      "grounded_verdict_matches": false
+    }
+  ]
+}

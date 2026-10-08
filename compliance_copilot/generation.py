@@ -1,6 +1,6 @@
 """Local Transformers backend. No API key or hosted inference is required."""
 
-DEFAULT_MODEL = "Qwen/Qwen2.5-3B-Instruct"
+DEFAULT_MODEL = "Qwen/Qwen3-4B-Instruct-2507"
 
 
 class LocalGenerator:

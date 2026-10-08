@@ -31,6 +31,14 @@ class AuditVerdict(Record):
     citations: list[Citation] = Field(min_length=1)
 
 
+class AuditDecision(Record):
+    """Model-owned fields; citation text is resolved from retrieved records."""
+
+    verdict: Literal["Meets", "Partial", "Gap"]
+    reasoning: Text
+    cited_swe_ids: list[Annotated[str, StringConstraints(pattern=r"^SWE-\d{3}$")]] = Field(min_length=1)
+
+
 class AuditRequest(Record):
     requirement_id: Text
     requirement_text: Text

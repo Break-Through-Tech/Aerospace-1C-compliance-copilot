@@ -1,0 +1,314 @@
+{
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "corpus_sha256": "bbea7241d65865048a318e61720e309cfd5e2e007e1a4be2c9e63a6e2b04cf96",
+  "benchmark_sha256": "1fc2bbfd6773bbb9de82be43bb01be9878ccb72dce5f74a8e16670bec0b2d047",
+  "results": [
+    {
+      "requirement_id": "NASA-SR-001",
+      "expected_swe_id": "SWE-013",
+      "legacy_rank": 8,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-002",
+      "expected_swe_id": "SWE-034",
+      "legacy_rank": 21,
+      "normalized_rank": 3
+    },
+    {
+      "requirement_id": "NASA-SR-003",
+      "expected_swe_id": "SWE-052",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-004",
+      "expected_swe_id": "SWE-050",
+      "legacy_rank": 3,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-005",
+      "expected_swe_id": "SWE-053",
+      "legacy_rank": 2,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-006",
+      "expected_swe_id": "SWE-055",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-007",
+      "expected_swe_id": "SWE-057",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-008",
+      "expected_swe_id": "SWE-061",
+      "legacy_rank": 29,
+      "normalized_rank": 8
+    },
+    {
+      "requirement_id": "NASA-SR-009",
+      "expected_swe_id": "SWE-135",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-010",
+      "expected_swe_id": "SWE-062",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-011",
+      "expected_swe_id": "SWE-186",
+      "legacy_rank": 32,
+      "normalized_rank": 7
+    },
+    {
+      "requirement_id": "NASA-SR-012",
+      "expected_swe_id": "SWE-066",
+      "legacy_rank": 4,
+      "normalized_rank": 3
+    },
+    {
+      "requirement_id": "NASA-SR-013",
+      "expected_swe_id": "SWE-187",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-014",
+      "expected_swe_id": "SWE-219",
+      "legacy_rank": 4,
+      "normalized_rank": 4
+    },
+    {
+      "requirement_id": "NASA-SR-015",
+      "expected_swe_id": "SWE-192",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-016",
+      "expected_swe_id": "SWE-156",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-017",
+      "expected_swe_id": "SWE-159",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-018",
+      "expected_swe_id": "SWE-207",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-019",
+      "expected_swe_id": "SWE-079",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-020",
+      "expected_swe_id": "SWE-084",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-021",
+      "expected_swe_id": "SWE-087",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-022",
+      "expected_swe_id": "SWE-090",
+      "legacy_rank": 17,
+      "normalized_rank": 5
+    },
+    {
+      "requirement_id": "NASA-SR-023",
+      "expected_swe_id": "SWE-201",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-024",
+      "expected_swe_id": "SWE-202",
+      "legacy_rank": 2,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-025",
+      "expected_swe_id": "SWE-027",
+      "legacy_rank": 7,
+      "normalized_rank": 2
+    },
+    {
+      "requirement_id": "NASA-SR-026",
+      "expected_swe_id": "SWE-037",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-027",
+      "expected_swe_id": "SWE-200",
+      "legacy_rank": 6,
+      "normalized_rank": 4
+    },
+    {
+      "requirement_id": "NASA-SR-028",
+      "expected_swe_id": "SWE-042",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-029",
+      "expected_swe_id": "SWE-204",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-030",
+      "expected_swe_id": "SWE-040",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-031",
+      "expected_swe_id": "SWE-174",
+      "legacy_rank": 2,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-032",
+      "expected_swe_id": "SWE-046",
+      "legacy_rank": 3,
+      "normalized_rank": 3
+    },
+    {
+      "requirement_id": "NASA-SR-033",
+      "expected_swe_id": "SWE-018",
+      "legacy_rank": 2,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-034",
+      "expected_swe_id": "SWE-191",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-035",
+      "expected_swe_id": "SWE-017",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-036",
+      "expected_swe_id": "SWE-034",
+      "legacy_rank": 5,
+      "normalized_rank": 4
+    },
+    {
+      "requirement_id": "NASA-SR-037",
+      "expected_swe_id": "SWE-201",
+      "legacy_rank": 2,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-038",
+      "expected_swe_id": "SWE-202",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-039",
+      "expected_swe_id": "SWE-090",
+      "legacy_rank": 4,
+      "normalized_rank": 2
+    },
+    {
+      "requirement_id": "NASA-SR-040",
+      "expected_swe_id": "SWE-084",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-041",
+      "expected_swe_id": "SWE-203",
+      "legacy_rank": 18,
+      "normalized_rank": 9
+    },
+    {
+      "requirement_id": "NASA-SR-042",
+      "expected_swe_id": "SWE-121",
+      "legacy_rank": 17,
+      "normalized_rank": 4
+    },
+    {
+      "requirement_id": "NASA-SR-043",
+      "expected_swe_id": "SWE-154",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-044",
+      "expected_swe_id": "SWE-159",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-045",
+      "expected_swe_id": "SWE-068",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-046",
+      "expected_swe_id": "SWE-071",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-047",
+      "expected_swe_id": "SWE-073",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-048",
+      "expected_swe_id": "SWE-086",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    },
+    {
+      "requirement_id": "NASA-SR-049",
+      "expected_swe_id": "SWE-080",
+      "legacy_rank": 4,
+      "normalized_rank": 3
+    },
+    {
+      "requirement_id": "NASA-SR-050",
+      "expected_swe_id": "SWE-196",
+      "legacy_rank": 1,
+      "normalized_rank": 1
+    }
+  ],
+  "counts": {
+    "legacy_top5": 41,
+    "legacy_top10": 44,
+    "normalized_top5": 47,
+    "normalized_top10": 50
+  }
+}

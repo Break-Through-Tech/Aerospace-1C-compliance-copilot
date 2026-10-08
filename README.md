@@ -4,7 +4,7 @@
 
 ## RAG audit baseline
 
-Run the structured requirement audit with `python scripts/run_rag_demo.py` after installing `requirements.txt` in Python 3.10 or newer. See [setup, output schema, and validation](docs/rag-pipeline.md) and the [demonstration notebook](notebooks/RAG_Audit_Demo.ipynb).
+Run the structured requirement audit with `python scripts/run_rag_demo.py` after installing `requirements.txt` in Python 3.10 or newer. See [setup, output schema, and validation](docs/rag-pipeline.md) and the [demonstration notebook](notebooks/RAG_Audit_Demo.ipynb). Measured results and remaining errors are in the [quality check](docs/rag-quality-check.md).
 
 
 ---

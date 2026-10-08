@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from compliance_copilot import AuditPipeline
-from compliance_copilot.retrieval import ClauseRetriever
+from compliance_copilot.retrieval import ClauseRetriever, retrieval_text
 from compliance_copilot.schemas import AuditResult, Clause
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,8 +21,7 @@ def clause():
 
 def response(clause, **changes):
     result = {"verdict": "Meets", "reasoning": "Requires all three planning activities.",
-              "citations": [{"swe_id": clause.swe_id, "section": clause.section,
-                             "quote": clause.requirement_text}]}
+              "cited_swe_ids": [clause.swe_id]}
     result.update(changes)
     return json.dumps(result)
 
@@ -47,24 +46,32 @@ def test_malformed_output_is_not_a_verdict(clause, raw):
 
 
 @pytest.mark.parametrize("changes", [
-    {"verdict": "Compliant"}, {"citations": []}, {"reasoning": " "},
+    {"verdict": "Compliant"}, {"cited_swe_ids": []}, {"reasoning": " "},
     {"confidence": 0.9}, {"verdict": 1},
 ])
 def test_schema_rejects_invalid_values(clause, changes):
     assert run(clause, response(clause, **changes)).error_code == "invalid_output"
 
 
-@pytest.mark.parametrize("field,value", [("swe_id", "SWE-999"), ("section", "4.1"), ("quote", "Invented obligation")])
-def test_hallucinated_citation_rejected(clause, field, value):
-    output = json.loads(response(clause))
-    output["citations"][0][field] = value
-    assert run(clause, json.dumps(output)).error_code == "invalid_citation"
+def test_hallucinated_citation_rejected(clause):
+    assert run(clause, response(clause, cited_swe_ids=["SWE-999"])).error_code == "invalid_citation"
 
 
 def test_duplicate_citation_rejected(clause):
-    output = json.loads(response(clause))
-    output["citations"] *= 2
-    assert run(clause, json.dumps(output)).error_code == "invalid_citation"
+    assert run(clause, response(clause, cited_swe_ids=[clause.swe_id] * 2)).error_code == "invalid_citation"
+
+
+def test_citation_text_and_section_come_from_source(clause):
+    result = run(clause, response(clause))
+    assert result.audit.citations[0].quote == clause.requirement_text
+    assert result.audit.citations[0].section == clause.section
+
+
+def test_model_cannot_inject_a_citation_quote(clause):
+    result = run(clause, response(clause, citations=[{
+        "swe_id": clause.swe_id, "section": "9.9", "quote": "Invented obligation",
+    }]))
+    assert result.error_code == "invalid_output"
 
 
 def test_empty_context_does_not_call_generator():
@@ -133,3 +140,12 @@ def test_adapter_rejects_wrong_section():
     adapter = ClauseRetriever(lambda q, k: frame, ROOT / "data/benchmark/clauses.json")
     with pytest.raises(ValueError, match="mismatch"):
         adapter("query", 1)
+
+
+def test_embedding_normalization_preserves_recipient_and_original_meaning():
+    assert retrieval_text("The NASA Project Manager shall provide NASA with source code.") == (
+        "The Project Manager shall provide NASA with source code."
+    )
+    assert retrieval_text("NASA unit tests shall be repeatable.") == "unit tests shall be repeatable."
+    assert retrieval_text("NASA software shall be tested.") == "software shall be tested."
+    assert retrieval_text("NASA OCE shall lead the initiative.") == "NASA OCE shall lead the initiative."

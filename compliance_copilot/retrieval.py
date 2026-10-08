@@ -2,12 +2,18 @@
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
 from .schemas import Clause
 
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+
+
+def retrieval_text(text: str) -> str:
+    """Remove agency qualifiers while preserving NASA as a recipient."""
+    return " ".join(re.sub(r"\bNASA\s+(?=(?:project|software|unit)\b)", "", text, flags=re.IGNORECASE).split())
 
 
 class ClauseRetriever:
@@ -43,11 +49,11 @@ class ClauseRetriever:
         return hits
 
 
-def build_retriever(root: Path, *, revision: str | None = None) -> ClauseRetriever:
+def build_retriever(root: Path, *, revision: str | None = None, normalize_agency: bool = True) -> ClauseRetriever:
     """Run Nam's normalized MiniLM/IndexFlatIP retrieval outside the notebook.
 
-    Ported from nam/vector-index, commit f78f3ff. Complete clause references
-    replace excerpts after search, so ranking follows the original index.
+    Ported from nam/vector-index, commit f78f3ff. Agency normalization affects
+    embeddings only. Set normalize_agency=False to reproduce the original index.
     """
     # Avoid conflicting OpenMP worker pools in macOS FAISS/PyTorch wheels.
     if sys.platform == "darwin":
@@ -64,8 +70,9 @@ def build_retriever(root: Path, *, revision: str | None = None) -> ClauseRetriev
     if table.empty or table.swe_id.duplicated().any():
         raise ValueError("Corpus must contain unique, nonempty SWE records")
     model = SentenceTransformer(EMBEDDING_MODEL, revision=revision, device="cpu")
+    embedding_text = retrieval_text if normalize_agency else lambda text: text
     vectors = np.ascontiguousarray(model.encode(
-        table.requirement_text.tolist(), normalize_embeddings=True,
+        [embedding_text(text) for text in table.requirement_text], normalize_embeddings=True,
         convert_to_numpy=True, show_progress_bar=False,
     ), dtype="float32")
     index = faiss.IndexFlatIP(vectors.shape[1])
@@ -77,7 +84,7 @@ def build_retriever(root: Path, *, revision: str | None = None) -> ClauseRetriev
         if type(k) is not int or k < 1:
             raise ValueError("k must be a positive integer")
         query_vector = np.ascontiguousarray(model.encode(
-            [query], normalize_embeddings=True, convert_to_numpy=True,
+            [embedding_text(query)], normalize_embeddings=True, convert_to_numpy=True,
             show_progress_bar=False,
         ), dtype="float32")
         scores, indices = index.search(query_vector, min(k, index.ntotal))
