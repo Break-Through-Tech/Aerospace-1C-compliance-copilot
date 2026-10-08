@@ -2,6 +2,11 @@
 
 > 💡 **Note for the team:** This is just a template. Update the above title with your AI Studio Challenge Project name. Remove all guidance notes and example text in this template and populate this README with your own content. You can work on this README throughout AI Studio, and get feedback from your AI Studio Coach and Challenge Advisor before finalizing it.  
 
+## RAG audit baseline
+
+Run the structured requirement audit with `python scripts/run_rag_demo.py` after installing `requirements.txt` in Python 3.10 or newer. See [setup, output schema, and validation](docs/rag-pipeline.md) and the [demonstration notebook](notebooks/RAG_Audit_Demo.ipynb). Measured results and remaining errors are in the [quality check](docs/rag-quality-check.md).
+
+
 ---
 
 ### 👥 **Team Members**
