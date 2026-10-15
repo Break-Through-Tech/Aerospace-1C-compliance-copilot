@@ -1,9 +1,9 @@
 import json
 from collections.abc import Callable
 
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
-from .schemas import AuditDecision, AuditRequest, AuditResult, AuditVerdict, Citation, Clause
+from .schemas import AuditDecision, AuditRequest, AuditResult, AuditVerdict, Citation, Clause, Text
 
 SYSTEM_PROMPT = """Compare a proposed software requirement with NASA NPR 7150.2D obligations.
 The task is directional: does the PROPOSED REQUIREMENT require everything mandated
@@ -55,11 +55,47 @@ class AuditPipeline:
         self.generator = generator
         self.top_k = top_k
 
+    def _validate_clauses(self, clauses) -> list[Clause]:
+        validated = [Clause.model_validate(c.model_dump() if isinstance(c, Clause) else c)
+                     for c in clauses]
+        if len(validated) > self.top_k or len({c.swe_id for c in validated}) != len(validated):
+            raise ValueError("Invalid retrieval count or duplicate SWE IDs")
+        return validated
+
+    def retrieve(self, query: str) -> list[Clause]:
+        """Retrieve validated clauses, propagating input and backend failures."""
+        query = TypeAdapter(Text).validate_python(query, strict=True)
+        return self._validate_clauses(self.retriever(query, self.top_k))
+
+    @staticmethod
+    def _retrieval_failure(base: AuditRequest) -> AuditResult:
+        return AuditResult(
+            requirement_id=base.requirement_id, requirement_text=base.requirement_text,
+            status="error", error_code="retrieval_error",
+            error_message="Retrieval failed or returned invalid clause metadata",
+        )
+
     def audit(self, requirement_id: str, requirement_text: str) -> AuditResult:
         # Validate caller input before any retrieval or model work.
         base = AuditRequest(requirement_id=requirement_id, requirement_text=requirement_text)
+        try:
+            clauses = self.retrieve(base.requirement_text)
+        except Exception:
+            return self._retrieval_failure(base)
+        return self._check_requirement(base, clauses)
+
+    def check_requirement(self, requirement_id: str, requirement_text: str,
+                          clauses: list[Clause]) -> AuditResult:
+        """Judge supplied clauses without performing another retrieval."""
+        base = AuditRequest(requirement_id=requirement_id, requirement_text=requirement_text)
+        try:
+            validated = self._validate_clauses(clauses)
+        except Exception:
+            return self._retrieval_failure(base)
+        return self._check_requirement(base, validated)
+
+    def _check_requirement(self, base: AuditRequest, clauses: list[Clause]) -> AuditResult:
         raw = None
-        clauses = []
 
         def fail(code, message):
             return AuditResult(requirement_id=base.requirement_id,
@@ -67,13 +103,6 @@ class AuditPipeline:
                                error_code=code, error_message=message, retrieved=clauses,
                                raw_output=raw)
 
-        try:
-            clauses = [Clause.model_validate(c) for c in self.retriever(base.requirement_text, self.top_k)]
-            if len(clauses) > self.top_k or len({c.swe_id for c in clauses}) != len(clauses):
-                raise ValueError("Invalid retrieval count or duplicate SWE IDs")
-        except Exception:
-            clauses = []
-            return fail("retrieval_error", "Retrieval failed or returned invalid clause metadata")
         if not clauses:
             return fail("no_context", "Retrieval returned no clauses")
         try:
