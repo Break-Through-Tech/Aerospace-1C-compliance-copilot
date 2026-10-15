@@ -1,0 +1,89 @@
+"""Run model-directed tool calls against the existing NASA benchmark inputs."""
+
+import argparse
+import csv
+import hashlib
+import importlib.metadata
+import json
+import platform
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from compliance_copilot import AuditPipeline
+from compliance_copilot.agent import AuditAgent
+from compliance_copilot.generation import DEFAULT_MODEL, LocalGenerator
+from compliance_copilot.retrieval import EMBEDDING_MODEL, build_retriever
+
+SOURCES = [
+    "data/benchmark/requirements.csv", "data/benchmark/clauses.json",
+    "data/npr-7150-2d-requirements.csv", "compliance_copilot/agent.py",
+    "compliance_copilot/pipeline.py", "compliance_copilot/retrieval.py",
+    "compliance_copilot/generation.py", "compliance_copilot/schemas.py",
+    "scripts/run_agent_demo.py",
+]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--ids", nargs="+")
+    selection.add_argument("--all", action="store_true")
+    parser.add_argument("--top-k", type=int, default=10)
+    parser.add_argument("--max-steps", type=int, default=8)
+    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--model-revision")
+    parser.add_argument("--embedding-revision")
+    parser.add_argument("--output", type=Path, default=ROOT / "outputs/agent/demo.json")
+    args = parser.parse_args()
+    with (ROOT / "data/benchmark/requirements.csv").open() as stream:
+        rows = list(csv.DictReader(stream))
+    by_id = {row["requirement_id"]: row for row in rows}
+    ids = list(by_id) if args.all else (args.ids or ["NASA-SR-001", "NASA-SR-002", "NASA-SR-005"])
+    if len(set(ids)) != len(ids) or any(key not in by_id for key in ids):
+        parser.error("Requirement IDs must be unique and exist in data/benchmark/requirements.csv")
+    if args.top_k < 1 or not 1 <= args.max_steps <= 32:
+        parser.error("top-k must be positive and max-steps must be from 1 to 32")
+
+    from huggingface_hub import HfApi
+    embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
+    model_revision = args.model_revision or HfApi().model_info(args.model).sha
+    retriever = build_retriever(ROOT, revision=embedding_revision)
+    generator = LocalGenerator(args.model, revision=model_revision)
+    pipeline = AuditPipeline(retriever, generator, top_k=args.top_k)
+    # One loaded model serves both the controller and the existing audit prompt.
+    agent = AuditAgent(pipeline, generator, max_steps=args.max_steps)
+    report = {
+        "config": {
+            "mode": "tool_calling_agent", "backend": "transformers",
+            "model": args.model, "model_revision": generator.revision,
+            "embedding_model": EMBEDDING_MODEL, "embedding_revision": embedding_revision,
+            "top_k": args.top_k, "max_steps": args.max_steps, "normalize_agency": True,
+            "do_sample": False, "max_new_tokens": generator.max_new_tokens,
+            "device": generator.device, "python": platform.python_version(),
+            "packages": {p: importlib.metadata.version(p) for p in
+                         ["torch", "transformers", "sentence-transformers", "faiss-cpu", "pydantic"]},
+        },
+        "input_sha256": {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in SOURCES},
+        # Same AuditResult rows consumed by summarize_rag_run.py, including failures.
+        "results": [], "runs": [],
+    }
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    for key in ids:
+        # Labels, expected clauses, and rationales never enter either model prompt.
+        run = agent.audit(key, by_id[key]["requirement_text"])
+        report["results"].append(run.result.model_dump())
+        report["runs"].append(run.model_dump())
+        temporary = args.output.with_suffix(args.output.suffix + ".tmp")
+        temporary.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+        temporary.replace(args.output)
+        print(key, run.termination,
+              run.result.audit.verdict if run.result.audit else run.result.error_code,
+              [step.tool for step in run.steps], flush=True)
+    return 0 if all(row["status"] == "ok" for row in report["results"]) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
