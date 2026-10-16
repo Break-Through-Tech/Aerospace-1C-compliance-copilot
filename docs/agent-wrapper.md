@@ -84,6 +84,8 @@ The caching team can wrap the controller or generator callable without changing 
 
 Persistent caching is available in `compliance_copilot/caching.py`. [caching.md](caching.md) describes keys, invalidation, and how to leave the cache disabled. The demo does not open a cache database.
 
+`compliance_copilot.batching.run_audits` runs one `audit` call per requirement, in order, including items that fail. [batching.md](batching.md) describes chunk size, batch-level errors, and why this is not a provider batch API. The demo loop and its `results` and `runs` fields are unchanged.
+
 ## Limits and verification
 
 Default maximum: eight controller calls plus at most one audit-generation call. Each local generation is capped at 768 new tokens. `max_steps` accepts 1 through 32. This bounds the number of calls, not wall-clock time; cancellation/timeouts for a remote or hanging backend belong in its callable adapter.
