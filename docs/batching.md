@@ -51,7 +51,7 @@ Pass an agent whose retriever and generator are already wrapped with `CachedCall
 results = run_audits(agent, requirements, batch_size=10)
 ```
 
-Build `agent` with the wrapped callables shown in [caching.md](caching.md).
+Build `agent` with the wrapped callables shown in [caching.md](caching.md). A rate limiter, when used, sits inside that cache wrapper. See [rate-limiting.md](rate-limiting.md). The quota counts client calls, not requirements.
 
 ## Reports
 

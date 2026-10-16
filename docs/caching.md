@@ -2,7 +2,7 @@
 
 `compliance_copilot/caching.py` stores successful generator and retriever returns in a local SQLite file. The agent, pipeline, prompts, and Pydantic audit models are unchanged. A cache hit still goes through the existing JSON, citation, and clause checks. Caching is off unless a caller builds a cache and wraps the callables. The demo scripts do not open a database.
 
-Batching and API rate limiting are separate work and are not part of this module.
+Batch execution and API rate limiting live in their own modules. See [batching.md](batching.md) and [rate-limiting.md](rate-limiting.md). This cache does not apply either policy. A rate limiter belongs inside the cached callable, so a hit does not spend quota.
 
 ## What is stored
 

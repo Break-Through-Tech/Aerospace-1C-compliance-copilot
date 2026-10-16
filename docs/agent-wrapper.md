@@ -86,6 +86,8 @@ Persistent caching is available in `compliance_copilot/caching.py`. [caching.md]
 
 `compliance_copilot.batching.run_audits` runs one `audit` call per requirement, in order, including items that fail. [batching.md](batching.md) describes chunk size, batch-level errors, and why this is not a provider batch API. The demo loop and its `results` and `runs` fields are unchanged.
 
+`RateLimitedCallable` in `compliance_copilot/rate_limit.py` is an optional quota and retry wrapper for a future hosted client. [rate-limiting.md](rate-limiting.md) describes the sliding window, which errors can be retried, and the cache → limiter → client order. Local Qwen is not wrapped, and the demo does not add quota delays.
+
 ## Limits and verification
 
 Default maximum: eight controller calls plus at most one audit-generation call. Each local generation is capped at 768 new tokens. `max_steps` accepts 1 through 32. This bounds the number of calls, not wall-clock time; cancellation/timeouts for a remote or hanging backend belong in its callable adapter.
