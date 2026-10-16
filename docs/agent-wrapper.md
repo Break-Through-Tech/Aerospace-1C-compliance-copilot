@@ -18,6 +18,8 @@ The default demo audits NASA-SR-001, NASA-SR-002, and NASA-SR-005. The initial c
 
 `--cache` stores identical local retrieval and generation calls in `outputs/cache/generation_cache.json`. It is off by default, and `--cache-path` is ignored without it. The same wrapped generator is both the audit model and the controller. See [Optional response cache](caching.md).
 
+`--batch-size 10` audits requirements through the sequential batch runner and saves after each chunk. Omit it to keep the original per-requirement loop. `batch_size` groups finished rows; it does not merge prompts or run the local model concurrently. See [Batch audits](batching.md).
+
 [Agent_Audit_Demo.ipynb](../notebooks/Agent_Audit_Demo.ipynb) displays the saved evidence and can optionally run the model locally or in Colab. Live Colab execution has not been verified.
 
 ## Tools and ownership
@@ -82,7 +84,7 @@ This JSON is an integration artifact. Full team JSON/Markdown report design rema
 
 ### Caching and batching integration
 
-The caching team can wrap the controller or generator callable without changing tool contracts. Cache keys need the complete ordered messages and model/generation configuration, not only the requirement text. Retrieval caching also needs the query, top_k, corpus version, and embedding configuration. Do not cache failed calls as successful audits. Batch orchestration should preserve one isolated `AgentResult` per requirement; the demo executes sequentially.
+The demo can wrap the controller and retriever with the optional JSON cache. Cache keys include the ordered messages and generation settings, or the query, top_k, corpus hashes, and embedding settings. Cached text still goes through audit validation. `--batch-size` calls `AuditAgent.audit` once per requirement, in order, on this thread. Agent failures stay in `results` and `runs`. Failures before an `AgentResult` exists are listed in `batch_errors` and are not given a verdict.
 
 ## Limits and verification
 

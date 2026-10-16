@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 
 from compliance_copilot import AuditPipeline
 from compliance_copilot.agent import AuditAgent
+from compliance_copilot.batching import run_audits
 from compliance_copilot.cache_integration import (
     DEFAULT_CACHE_PATH, cache_config, corpus_sha256, wrap_local_callables,
 )
@@ -45,6 +46,8 @@ def build_parser():
                         help="Cache identical local retrieval and generation calls (default: off)")
     parser.add_argument("--cache-path", type=Path, default=ROOT / DEFAULT_CACHE_PATH,
                         help="JSON cache file used only together with --cache")
+    parser.add_argument("--batch-size", type=int, default=None,
+                        help="Release finished audits in chunks of this size (default: original per-requirement loop)")
     return parser
 
 
@@ -59,6 +62,8 @@ def main():
         parser.error("Requirement IDs must be unique and exist in data/benchmark/requirements.csv")
     if args.top_k < 1 or not 1 <= args.max_steps <= 32:
         parser.error("top-k must be positive and max-steps must be from 1 to 32")
+    if args.batch_size is not None and args.batch_size < 1:
+        parser.error("batch-size must be a positive integer")
 
     from huggingface_hub import HfApi
     embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
@@ -98,18 +103,53 @@ def main():
     if args.cache:
         report["config"]["cache"] = cache_config(args.cache_path, ROOT)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    for key in ids:
-        # Labels, expected clauses, and rationales never enter either model prompt.
-        run = agent.audit(key, by_id[key]["requirement_text"])
-        report["results"].append(run.result.model_dump())
-        report["runs"].append(run.model_dump())
+
+    def write_report():
         temporary = args.output.with_suffix(args.output.suffix + ".tmp")
         temporary.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
         temporary.replace(args.output)
+
+    def print_run(key, run):
         print(key, run.termination,
               run.result.audit.verdict if run.result.audit else run.result.error_code,
               [step.tool for step in run.steps], flush=True)
-    return 0 if all(row["status"] == "ok" for row in report["results"]) else 1
+
+    if args.batch_size is None:
+        for key in ids:
+            # Labels, expected clauses, and rationales never enter either model prompt.
+            run = agent.audit(key, by_id[key]["requirement_text"])
+            report["results"].append(run.result.model_dump())
+            report["runs"].append(run.model_dump())
+            write_report()
+            print_run(key, run)
+    else:
+        # Chunk size only groups finished rows. Each requirement still calls audit() once.
+        report["config"]["batch_size"] = args.batch_size
+        report["batch_errors"] = []
+
+        def save_chunk(chunk):
+            for item in chunk:
+                if item.result is None:
+                    report["batch_errors"].append({
+                        "index": item.index,
+                        "requirement_id": item.requirement_id,
+                        "error": item.error.model_dump(),
+                    })
+                    print(item.requirement_id, "batch_error", item.error.code, flush=True)
+                else:
+                    report["results"].append(item.result.result.model_dump())
+                    report["runs"].append(item.result.model_dump())
+                    print_run(item.requirement_id, item.result)
+            write_report()
+
+        run_audits(
+            agent,
+            ((key, by_id[key]["requirement_text"]) for key in ids),
+            batch_size=args.batch_size,
+            on_chunk=save_chunk,
+        )
+    batch_failed = bool(report.get("batch_errors"))
+    return 0 if all(row["status"] == "ok" for row in report["results"]) and not batch_failed else 1
 
 
 if __name__ == "__main__":
