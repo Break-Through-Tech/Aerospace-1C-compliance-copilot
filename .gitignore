@@ -3,3 +3,13 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 *.pyc
+
+# Local response caches. These files contain requirement text and model output.
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite3-journal
+*.sqlite-wal
+*.sqlite3-wal
+*.sqlite-shm
+*.sqlite3-shm

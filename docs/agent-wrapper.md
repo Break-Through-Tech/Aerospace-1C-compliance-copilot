@@ -82,6 +82,8 @@ This JSON is an integration artifact. Full team JSON/Markdown report design rema
 
 The caching team can wrap the controller or generator callable without changing tool contracts. Cache keys need the complete ordered messages and model/generation configuration, not only the requirement text. Retrieval caching also needs the query, top_k, corpus version, and embedding configuration. Do not cache failed calls as successful audits. Batch orchestration should preserve one isolated `AgentResult` per requirement; the demo executes sequentially.
 
+Persistent caching is available in `compliance_copilot/caching.py`. [caching.md](caching.md) describes keys, invalidation, and how to leave the cache disabled. The demo does not open a cache database.
+
 ## Limits and verification
 
 Default maximum: eight controller calls plus at most one audit-generation call. Each local generation is capped at 768 new tokens. `max_steps` accepts 1 through 32. This bounds the number of calls, not wall-clock time; cancellation/timeouts for a remote or hanging backend belong in its callable adapter.
