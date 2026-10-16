@@ -273,12 +273,53 @@ def test_unexpected_exception_is_not_a_gap_and_does_not_stop_the_batch():
     assert results[1].result is None
     assert results[1].error.code == "audit_exception"
     assert results[1].error.exception_type == "RuntimeError"
-    assert results[1].error.message == "controller crashed"
+    assert results[1].error.message == "An unexpected error occurred while executing the audit."
+    assert "controller crashed" not in results[1].model_dump_json()
     assert results[1].requirement_id == "boom"
     assert results[0].result.result.audit.verdict == "Meets"
     assert results[0].result.gaps == []
     assert results[2].result.result.requirement_id == "after"
     assert results[2].error is None
+
+
+def test_batch_errors_do_not_keep_secret_exception_text():
+    token = "sk-test-TOKEN-12345"
+    leaked_input = "sk-test-INPUT-999"
+
+    class Agent:
+        def __init__(self):
+            self.calls = []
+
+        def audit(self, requirement_id, requirement_text):
+            self.calls.append(requirement_id)
+            if requirement_id == "leak":
+                raise RuntimeError(f"authorization failed for {token}")
+            AuditRequest(requirement_id=requirement_id, requirement_text=requirement_text)
+            return finished(requirement_id, requirement_text)
+
+    with pytest.raises(ValidationError) as caught:
+        AuditRequest(requirement_id="case", requirement_text={"api_key": leaked_input})
+    assert leaked_input in str(caught.value)
+
+    agent = Agent()
+    results = run_audits(agent, [
+        ("leak", "Requirement that crashes with a token."),
+        ("case", {"api_key": leaked_input}),
+        ("next", "Requirement after the failure."),
+    ])
+    assert agent.calls == ["leak", "case", "next"]
+    assert results[0].error.code == "audit_exception"
+    assert results[0].error.exception_type == "RuntimeError"
+    assert results[0].error.message == "An unexpected error occurred while executing the audit."
+    assert results[1].error.code == "invalid_input"
+    assert results[1].error.exception_type == "ValidationError"
+    assert results[1].error.message == "Invalid requirement input."
+    assert results[1].requirement_id == "case"
+    assert results[2].result.termination == "finished"
+    assert results[2].result.result.requirement_id == "next"
+    serialized = "".join(item.model_dump_json() for item in results)
+    assert token not in serialized
+    assert leaked_input not in serialized
 
 
 def test_duplicate_ids_keep_separate_indexes():

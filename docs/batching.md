@@ -39,7 +39,7 @@ If a requirement is rejected before an `AgentResult` exists, `result` is `None` 
 | `invalid_input` | The item is not a requirement pair, or `AuditRequest` rejects the id or text. |
 | `audit_exception` | `audit` raises, or it returns something other than an `AgentResult`. |
 
-`error.exception_type` and `error.message` describe that failure. The batch does not turn the exception into a Meets, Partial, or Gap verdict. `index` is the input position, so two rows with the same requirement id do not overwrite each other.
+`error.exception_type` names the exception class. `error.message` is a fixed description, either "Invalid requirement input." or "An unexpected error occurred while executing the audit." The raw exception text is not stored. The batch does not turn the exception into a Meets, Partial, or Gap verdict. `index` is the input position, so two rows with the same requirement id do not overwrite each other.
 
 Each stored `AgentResult` is a deep copy. Changing one item's clauses or gaps does not change another item.
 

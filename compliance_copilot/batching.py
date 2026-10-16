@@ -90,11 +90,14 @@ def _run_one(agent, index: int, item) -> BatchItemResult:
     except ValidationError as exc:
         return _input_error(index, requirement_id, exc)
     except Exception as exc:
-        message = str(exc).strip() or type(exc).__name__
         return BatchItemResult(
             index=index,
             requirement_id=requirement_id if isinstance(requirement_id, str) else None,
-            error=BatchError(code="audit_exception", message=message, exception_type=type(exc).__name__),
+            error=BatchError(
+                code="audit_exception",
+                message="An unexpected error occurred while executing the audit.",
+                exception_type=type(exc).__name__,
+            ),
         )
     if not isinstance(result, AgentResult):
         return BatchItemResult(
@@ -114,11 +117,14 @@ def _run_one(agent, index: int, item) -> BatchItemResult:
 
 
 def _input_error(index: int, requirement_id, exc: Exception) -> BatchItemResult:
-    message = str(exc).strip() or type(exc).__name__
     return BatchItemResult(
         index=index,
         requirement_id=requirement_id if isinstance(requirement_id, str) and requirement_id.strip() else None,
-        error=BatchError(code="invalid_input", message=message, exception_type=type(exc).__name__),
+        error=BatchError(
+            code="invalid_input",
+            message="Invalid requirement input.",
+            exception_type=type(exc).__name__,
+        ),
     )
 
 
