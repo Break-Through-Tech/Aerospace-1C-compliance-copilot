@@ -3,3 +3,7 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 *.pyc
+
+# Local response cache. Contains requirement text and model output.
+# Reports under outputs/rag and outputs/agent stay tracked.
+outputs/cache/

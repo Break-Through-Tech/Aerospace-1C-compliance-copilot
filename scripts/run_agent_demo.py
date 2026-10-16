@@ -14,7 +14,11 @@ sys.path.insert(0, str(ROOT))
 
 from compliance_copilot import AuditPipeline
 from compliance_copilot.agent import AuditAgent
+from compliance_copilot.cache_integration import (
+    DEFAULT_CACHE_PATH, cache_config, corpus_sha256, wrap_local_callables,
+)
 from compliance_copilot.generation import DEFAULT_MODEL, LocalGenerator
+from compliance_copilot.request_utils import GenerationCache
 from compliance_copilot.retrieval import EMBEDDING_MODEL, build_retriever
 
 SOURCES = [
@@ -26,7 +30,7 @@ SOURCES = [
 ]
 
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--ids", nargs="+")
@@ -37,6 +41,15 @@ def main():
     parser.add_argument("--model-revision")
     parser.add_argument("--embedding-revision")
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/agent/demo.json")
+    parser.add_argument("--cache", action="store_true",
+                        help="Cache identical local retrieval and generation calls (default: off)")
+    parser.add_argument("--cache-path", type=Path, default=ROOT / DEFAULT_CACHE_PATH,
+                        help="JSON cache file used only together with --cache")
+    return parser
+
+
+def main():
+    parser = build_parser()
     args = parser.parse_args()
     with (ROOT / "data/benchmark/requirements.csv").open() as stream:
         rows = list(csv.DictReader(stream))
@@ -52,17 +65,29 @@ def main():
     model_revision = args.model_revision or HfApi().model_info(args.model).sha
     retriever = build_retriever(ROOT, revision=embedding_revision)
     generator = LocalGenerator(args.model, revision=model_revision)
+    loaded_revision = generator.revision
+    max_new_tokens = generator.max_new_tokens
+    device = generator.device
+    if args.cache:
+        # LocalGenerator decodes with do_sample=False. The agent demo always normalizes agency names.
+        retriever, generator = wrap_local_callables(
+            retriever, generator, GenerationCache(args.cache_path),
+            model=args.model, revision=loaded_revision,
+            max_new_tokens=max_new_tokens, do_sample=False, device=device,
+            embedding_model=EMBEDDING_MODEL, embedding_revision=embedding_revision,
+            normalize_agency=True, corpus_sha256=corpus_sha256(ROOT),
+        )
     pipeline = AuditPipeline(retriever, generator, top_k=args.top_k)
     # One loaded model serves both the controller and the existing audit prompt.
     agent = AuditAgent(pipeline, generator, max_steps=args.max_steps)
     report = {
         "config": {
             "mode": "tool_calling_agent", "backend": "transformers",
-            "model": args.model, "model_revision": generator.revision,
+            "model": args.model, "model_revision": loaded_revision,
             "embedding_model": EMBEDDING_MODEL, "embedding_revision": embedding_revision,
             "top_k": args.top_k, "max_steps": args.max_steps, "normalize_agency": True,
-            "do_sample": False, "max_new_tokens": generator.max_new_tokens,
-            "device": generator.device, "python": platform.python_version(),
+            "do_sample": False, "max_new_tokens": max_new_tokens,
+            "device": device, "python": platform.python_version(),
             "packages": {p: importlib.metadata.version(p) for p in
                          ["torch", "transformers", "sentence-transformers", "faiss-cpu", "pydantic"]},
         },
@@ -70,6 +95,8 @@ def main():
         # Same AuditResult rows consumed by summarize_rag_run.py, including failures.
         "results": [], "runs": [],
     }
+    if args.cache:
+        report["config"]["cache"] = cache_config(args.cache_path, ROOT)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     for key in ids:
         # Labels, expected clauses, and rationales never enter either model prompt.

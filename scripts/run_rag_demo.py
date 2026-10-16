@@ -13,11 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from compliance_copilot import AuditPipeline
+from compliance_copilot.cache_integration import (
+    DEFAULT_CACHE_PATH, cache_config, corpus_sha256, wrap_local_callables,
+)
 from compliance_copilot.generation import DEFAULT_MODEL, LocalGenerator
+from compliance_copilot.request_utils import GenerationCache
 from compliance_copilot.retrieval import EMBEDDING_MODEL, build_retriever
 
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--ids", nargs="+")
@@ -28,6 +32,15 @@ def main():
     parser.add_argument("--model-revision")
     parser.add_argument("--embedding-revision")
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/rag/demo.json")
+    parser.add_argument("--cache", action="store_true",
+                        help="Cache identical local retrieval and generation calls (default: off)")
+    parser.add_argument("--cache-path", type=Path, default=ROOT / DEFAULT_CACHE_PATH,
+                        help="JSON cache file used only together with --cache")
+    return parser
+
+
+def main():
+    parser = build_parser()
     args = parser.parse_args()
     rows = list(csv.DictReader((ROOT / "data/benchmark/requirements.csv").open()))
     by_id = {r["requirement_id"]: r for r in rows}
@@ -37,14 +50,27 @@ def main():
     from huggingface_hub import HfApi
     embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
     model_revision = args.model_revision or HfApi().model_info(args.model).sha
-    retriever = build_retriever(ROOT, revision=embedding_revision, normalize_agency=not args.legacy_retrieval)
+    normalize_agency = not args.legacy_retrieval
+    retriever = build_retriever(ROOT, revision=embedding_revision, normalize_agency=normalize_agency)
     generator = LocalGenerator(args.model, revision=model_revision)
+    loaded_revision = generator.revision
+    max_new_tokens = generator.max_new_tokens
+    device = generator.device
+    if args.cache:
+        # LocalGenerator decodes with do_sample=False.
+        retriever, generator = wrap_local_callables(
+            retriever, generator, GenerationCache(args.cache_path),
+            model=args.model, revision=loaded_revision,
+            max_new_tokens=max_new_tokens, do_sample=False, device=device,
+            embedding_model=EMBEDDING_MODEL, embedding_revision=embedding_revision,
+            normalize_agency=normalize_agency, corpus_sha256=corpus_sha256(ROOT),
+        )
     pipeline = AuditPipeline(retriever, generator, top_k=args.top_k)
     report = {
-        "config": {"backend": "transformers", "model": args.model, "model_revision": generator.revision,
+        "config": {"backend": "transformers", "model": args.model, "model_revision": loaded_revision,
                    "embedding_model": EMBEDDING_MODEL, "embedding_revision": embedding_revision,
-                   "top_k": args.top_k, "normalize_agency": not args.legacy_retrieval, "do_sample": False, "max_new_tokens": generator.max_new_tokens,
-                   "device": generator.device, "python": platform.python_version(),
+                   "top_k": args.top_k, "normalize_agency": normalize_agency, "do_sample": False, "max_new_tokens": max_new_tokens,
+                   "device": device, "python": platform.python_version(),
                    "packages": {p: importlib.metadata.version(p) for p in
                                 ["torch", "transformers", "sentence-transformers", "faiss-cpu", "pydantic"]}},
         "input_sha256": {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in
@@ -54,6 +80,8 @@ def main():
                           "compliance_copilot/schemas.py", "scripts/run_rag_demo.py"]},
         "results": [],
     }
+    if args.cache:
+        report["config"]["cache"] = cache_config(args.cache_path, ROOT)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     for requirement_id in args.ids:
         # Expected clause IDs, verdicts, and rationales never enter the pipeline.

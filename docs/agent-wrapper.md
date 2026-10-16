@@ -16,6 +16,8 @@ python scripts/summarize_rag_run.py outputs/agent/demo.json --output outputs/age
 
 The default demo audits NASA-SR-001, NASA-SR-002, and NASA-SR-005. The initial controller prompt excludes the benchmark identifier, and the audit prompt uses the requirement text and retrieved sources. Expected verdicts, assigned reference IDs, and benchmark rationales are used only by the separate scoring script. After checking, tool observations include the requirement identifier for traceability; the verdict can no longer change. Use `--ids NASA-SR-003 NASA-SR-010` to select cases or `--all` for the development benchmark. `--output` selects the result path. `--model-revision` and `--embedding-revision` pin model commits; the resolved revisions, package versions, and source hashes are saved in each report.
 
+`--cache` stores identical local retrieval and generation calls in `outputs/cache/generation_cache.json`. It is off by default, and `--cache-path` is ignored without it. The same wrapped generator is both the audit model and the controller. See [Optional response cache](caching.md).
+
 [Agent_Audit_Demo.ipynb](../notebooks/Agent_Audit_Demo.ipynb) displays the saved evidence and can optionally run the model locally or in Colab. Live Colab execution has not been verified.
 
 ## Tools and ownership
