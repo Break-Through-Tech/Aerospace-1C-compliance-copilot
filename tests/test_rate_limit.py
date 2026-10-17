@@ -532,12 +532,19 @@ def test_local_pipeline_is_not_wrapped_unless_the_caller_adds_the_limiter():
         "compliance_copilot/request_utils.py",
         "compliance_copilot/cache_integration.py",
         "compliance_copilot/batching.py",
-        "scripts/run_agent_demo.py",
-        "scripts/run_rag_demo.py",
     ]:
         text = (ROOT / path).read_text(encoding="utf-8")
         assert "RateLimitedCallable" not in text
         assert "rate_limit" not in text
+    # The demos construct the limiter only for --backend api. Local Qwen stays outside it.
+    for path in ["scripts/run_agent_demo.py", "scripts/run_rag_demo.py"]:
+        text = (ROOT / path).read_text(encoding="utf-8")
+        assert 'choices=("local", "api"), default="local"' in text
+        api_and_rest = text.split('if args.backend == "api":', 1)[1]
+        api_branch, after_api = api_and_rest.split("else:", 1)
+        assert "RateLimitedCallable(" in api_branch
+        assert "LocalGenerator(" in after_api
+        assert "RateLimitedCallable(" not in after_api
 
 
 def test_invalid_requirement_still_raises_before_a_hosted_call():

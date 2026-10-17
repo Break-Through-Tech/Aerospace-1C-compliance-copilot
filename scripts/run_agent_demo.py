@@ -14,11 +14,13 @@ sys.path.insert(0, str(ROOT))
 
 from compliance_copilot import AuditPipeline
 from compliance_copilot.agent import AuditAgent
+from compliance_copilot.api_generator import APIGenerator
 from compliance_copilot.batching import run_audits
 from compliance_copilot.cache_integration import (
     DEFAULT_CACHE_PATH, cache_config, corpus_sha256, wrap_local_callables,
 )
 from compliance_copilot.generation import DEFAULT_MODEL, LocalGenerator
+from compliance_copilot.rate_limit import RateLimitedCallable
 from compliance_copilot.request_utils import GenerationCache
 from compliance_copilot.retrieval import EMBEDDING_MODEL, build_retriever
 
@@ -41,9 +43,16 @@ def build_parser():
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--model-revision")
     parser.add_argument("--embedding-revision")
+    parser.add_argument("--backend", choices=("local", "api"), default="local",
+                        help="local Qwen (default) or an OpenAI-compatible hosted API")
+    parser.add_argument("--max-new-tokens", type=int, default=768)
+    parser.add_argument("--temperature", type=float, default=0,
+                        help="Hosted sampling temperature. The local backend stays at 0.")
+    parser.add_argument("--timeout", type=float, default=60,
+                        help="Hosted request timeout in seconds. Ignored by the local backend.")
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/agent/demo.json")
     parser.add_argument("--cache", action="store_true",
-                        help="Cache identical local retrieval and generation calls (default: off)")
+                        help="Cache identical retrieval and generation calls (default: off)")
     parser.add_argument("--cache-path", type=Path, default=ROOT / DEFAULT_CACHE_PATH,
                         help="JSON cache file used only together with --cache")
     parser.add_argument("--batch-size", type=int, default=None,
@@ -64,21 +73,53 @@ def main():
         parser.error("top-k must be positive and max-steps must be from 1 to 32")
     if args.batch_size is not None and args.batch_size < 1:
         parser.error("batch-size must be a positive integer")
+    if args.max_new_tokens < 1:
+        parser.error("max-new-tokens must be a positive integer")
+    if args.backend == "local" and args.temperature != 0:
+        parser.error("the local backend always uses temperature 0")
 
-    from huggingface_hub import HfApi
-    embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
-    model_revision = args.model_revision or HfApi().model_info(args.model).sha
+    endpoint = None
+    temperature = None
+    if args.backend == "api":
+        # Do not load Qwen or look up a local chat-model revision.
+        try:
+            api = APIGenerator(
+                model=None if args.model == DEFAULT_MODEL else args.model,
+                max_new_tokens=args.max_new_tokens,
+                temperature=args.temperature,
+                timeout=args.timeout,
+            )
+        except ValueError as exc:
+            parser.error(str(exc))
+        generator = RateLimitedCallable(api)
+        embedding_revision = args.embedding_revision
+        loaded_revision = args.model_revision
+        max_new_tokens = api.max_new_tokens
+        device = "api"
+        backend_name = "openai-compatible"
+        model_name = api.model
+        do_sample = api.temperature > 0
+        endpoint = api.endpoint_identity
+        temperature = api.temperature
+    else:
+        from huggingface_hub import HfApi
+        embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
+        model_revision = args.model_revision or HfApi().model_info(args.model).sha
+        generator = LocalGenerator(args.model, revision=model_revision, max_new_tokens=args.max_new_tokens)
+        loaded_revision = generator.revision
+        max_new_tokens = generator.max_new_tokens
+        device = generator.device
+        backend_name = "transformers"
+        model_name = args.model
+        do_sample = False
     retriever = build_retriever(ROOT, revision=embedding_revision)
-    generator = LocalGenerator(args.model, revision=model_revision)
-    loaded_revision = generator.revision
-    max_new_tokens = generator.max_new_tokens
-    device = generator.device
     if args.cache:
-        # LocalGenerator decodes with do_sample=False. The agent demo always normalizes agency names.
+        # The agent demo always normalizes agency names.
         retriever, generator = wrap_local_callables(
             retriever, generator, GenerationCache(args.cache_path),
-            model=args.model, revision=loaded_revision,
-            max_new_tokens=max_new_tokens, do_sample=False, device=device,
+            backend=backend_name, model=model_name, revision=loaded_revision,
+            max_new_tokens=max_new_tokens, do_sample=do_sample, device=device,
+            endpoint=endpoint, temperature=temperature,
             embedding_model=EMBEDDING_MODEL, embedding_revision=embedding_revision,
             normalize_agency=True, corpus_sha256=corpus_sha256(ROOT),
         )
@@ -87,11 +128,11 @@ def main():
     agent = AuditAgent(pipeline, generator, max_steps=args.max_steps)
     report = {
         "config": {
-            "mode": "tool_calling_agent", "backend": "transformers",
-            "model": args.model, "model_revision": loaded_revision,
+            "mode": "tool_calling_agent", "backend": backend_name,
+            "model": model_name, "model_revision": loaded_revision,
             "embedding_model": EMBEDDING_MODEL, "embedding_revision": embedding_revision,
             "top_k": args.top_k, "max_steps": args.max_steps, "normalize_agency": True,
-            "do_sample": False, "max_new_tokens": max_new_tokens,
+            "do_sample": do_sample, "max_new_tokens": max_new_tokens,
             "device": device, "python": platform.python_version(),
             "packages": {p: importlib.metadata.version(p) for p in
                          ["torch", "transformers", "sentence-transformers", "faiss-cpu", "pydantic"]},
@@ -100,6 +141,9 @@ def main():
         # Same AuditResult rows consumed by summarize_rag_run.py, including failures.
         "results": [], "runs": [],
     }
+    if args.backend == "api":
+        report["config"]["api_endpoint"] = endpoint
+        report["config"]["temperature"] = temperature
     if args.cache:
         report["config"]["cache"] = cache_config(args.cache_path, ROOT)
     args.output.parent.mkdir(parents=True, exist_ok=True)

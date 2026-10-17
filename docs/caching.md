@@ -17,7 +17,7 @@ python scripts/run_agent_demo.py --cache
 
 `--legacy-retrieval` still turns agency-name normalization off for the RAG demo. When caching is enabled, that choice is part of the retrieval key.
 
-Both demos still load the local retriever and `LocalGenerator`. They do not apply `RateLimitedCallable`. That wrapper is for a future hosted client; see [API rate limiting](rate-limiting.md).
+The default `--backend local` still loads the local retriever and `LocalGenerator`. That path does not apply `RateLimitedCallable`. `--backend api` wraps the hosted client in the order described in [Optional hosted API generator](api-generator.md) and [API rate limiting](rate-limiting.md).
 
 ## Cache file
 
@@ -32,10 +32,11 @@ Every key is the SHA-256 of a canonical JSON object, via `make_cache_key`. `sche
 Generation keys contain:
 
 - schema version and kind `generation`
-- backend, currently `transformers`
+- backend, `transformers` for local Qwen or `openai-compatible` for the hosted client
 - model id and revision
 - `max_new_tokens`, `do_sample`, and `device`
 - the full ordered message list
+- for a hosted call only, the credential-free endpoint and `temperature`
 
 `LocalGenerator` decodes with `do_sample=False`. The demos pass that same value. `device` and `max_new_tokens` are read from the loaded generator.
 

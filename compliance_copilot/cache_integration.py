@@ -1,9 +1,11 @@
-"""Optional JSON cache in front of local retrieval and generation.
+"""Optional JSON cache in front of retrieval and generation.
 
 Persistence stays in request_utils.GenerationCache. This module only builds
 configuration-aware keys and decides when a stored value is safe to return.
 CachedGenerator is not used here: its key covers messages, model, and revision,
 and these demos also vary max_new_tokens, do_sample, device, and backend.
+Hosted calls also include a credential-free endpoint and temperature. Those
+fields are omitted when they are not provided, so local keys stay the same.
 
 A cache file that is not a JSON object is left untouched. Delete that file to
 start a new cache. A readable JSON object may gain a new entry after a real
@@ -15,8 +17,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from collections.abc import Callable, Mapping
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from pydantic import ValidationError
 
@@ -63,10 +67,18 @@ def generation_cache_key(
     max_new_tokens: int,
     do_sample: bool,
     device: str,
+    endpoint: str | None = None,
+    temperature: float | None = None,
 ) -> str:
-    """SHA-256 key for one messages-to-text call and its generation settings."""
+    """SHA-256 key for one messages-to-text call and its generation settings.
 
-    return make_cache_key({
+    endpoint and temperature are included only when the caller supplies them.
+    Local Qwen keys leave both unset. A hosted key should pass the normalized
+    endpoint, with no userinfo, query, or fragment, and the temperature that
+    was sent to the provider.
+    """
+
+    payload = {
         "schema_version": CACHE_SCHEMA_VERSION,
         "kind": "generation",
         "backend": backend,
@@ -76,7 +88,12 @@ def generation_cache_key(
         "do_sample": do_sample,
         "device": device,
         "messages": messages,
-    })
+    }
+    if endpoint is not None:
+        payload["endpoint"] = _credential_free_endpoint(endpoint)
+    if temperature is not None:
+        payload["temperature"] = _optional_temperature(temperature)
+    return make_cache_key(payload)
 
 
 def retrieval_cache_key(
@@ -131,6 +148,8 @@ class CachedTextGenerator:
         max_new_tokens: int,
         do_sample: bool,
         device: str,
+        endpoint: str | None = None,
+        temperature: float | None = None,
     ):
         if not callable(generator):
             raise TypeError("generator must be callable")
@@ -144,6 +163,8 @@ class CachedTextGenerator:
         self._max_new_tokens = _positive_int(max_new_tokens, "max_new_tokens")
         self._do_sample = _flag(do_sample, "do_sample")
         self._device = _text(device, "device")
+        self._endpoint = None if endpoint is None else _credential_free_endpoint(endpoint)
+        self._temperature = _optional_temperature(temperature)
 
     def __call__(self, messages):
         key = self._key(messages)
@@ -166,6 +187,8 @@ class CachedTextGenerator:
                 max_new_tokens=self._max_new_tokens,
                 do_sample=self._do_sample,
                 device=self._device,
+                endpoint=self._endpoint,
+                temperature=self._temperature,
             )
         except (TypeError, ValueError):
             return None
@@ -236,6 +259,8 @@ def wrap_local_callables(
     normalize_agency: bool,
     corpus_sha256: Mapping[str, str],
     backend: str = "transformers",
+    endpoint: str | None = None,
+    temperature: float | None = None,
 ):
     """Return the original callables when cache is None."""
 
@@ -259,6 +284,8 @@ def wrap_local_callables(
             max_new_tokens=max_new_tokens,
             do_sample=do_sample,
             device=device,
+            endpoint=endpoint,
+            temperature=temperature,
         ),
     )
 
@@ -336,6 +363,34 @@ def _optional_text(value, field: str) -> str | None:
     if value is None:
         return None
     return _text(value, field)
+
+
+def _optional_temperature(value) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("temperature must be a non-negative number")
+    number = float(value)
+    if not math.isfinite(number) or number < 0:
+        raise ValueError("temperature must be a non-negative number")
+    return number
+
+
+def _credential_free_endpoint(value) -> str:
+    """Reject endpoint identities that could hide a credential. Do not echo value."""
+
+    text = _text(value, "endpoint")
+    parts = urlsplit(text)
+    if (
+        parts.username
+        or parts.password
+        or parts.query
+        or parts.fragment
+        or parts.scheme not in {"http", "https"}
+        or not parts.hostname
+    ):
+        raise ValueError("endpoint must be an HTTP(S) URL without credentials, a query, or a fragment")
+    return text
 
 
 def _flag(value, field: str) -> bool:

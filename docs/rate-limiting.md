@@ -1,6 +1,6 @@
 # API rate limiting
 
-`compliance_copilot/rate_limit.py` is an optional wrapper for a future hosted model client. `LocalGenerator` is not wrapped. `scripts/run_agent_demo.py` and `scripts/run_rag_demo.py` do not import it, so a local run does not sleep for an API quota. No hosted client ships with this module.
+`compliance_copilot/rate_limit.py` is the quota and retry wrapper for the hosted client in [Optional hosted API generator](api-generator.md). `LocalGenerator` is not wrapped. The demos construct `RateLimitedCallable` only for `--backend api`, so a local run does not sleep for an API quota.
 
 The limit belongs to one `RateLimitedCallable` instance in one process. Two wrappers do not share a window. Separate processes and remote workers do not share it either. This is not a distributed account quota.
 
@@ -95,6 +95,6 @@ generator = CachedTextGenerator(
 
 `run_audits` does not know about the limiter. Pass an agent whose generator is already wrapped. The quota counts client calls, not requirements. One audit can call the model several times, and each retry counts. If retries are exhausted, that requirement keeps the agent's normal error result and later requirements still run.
 
-## A later hosted adapter
+## Hosted adapter
 
-Stage 3 can add a messages-to-text client. On HTTP 429 or a transient 5xx, it should raise `TransientAPIError` or another exception with `status_code` and `retry_after`, or with `response.status_code` and `response.headers["Retry-After"]`. Wrap that callable with `RateLimitedCallable`, then with `CachedTextGenerator`, and pass the cached callable to `AuditPipeline` and `AuditAgent`. Leave `LocalGenerator` unwrapped.
+`APIGenerator` performs one request. On HTTP 429 or a transient 5xx it raises `TransientAPIError` with `status_code` and `retry_after`. It does not retry on its own. The demos wrap it with `RateLimitedCallable`, then with `CachedTextGenerator` when `--cache` is set, and pass that callable to `AuditPipeline` and `AuditAgent`. `LocalGenerator` stays unwrapped. See [Optional hosted API generator](api-generator.md).
