@@ -1,6 +1,6 @@
 # Batch audits
 
-`compliance_copilot/batching.py` runs an existing `AuditAgent` once per requirement. It does not change the agent, the pipeline, or the Pydantic audit models. Caching stays outside the runner: build the agent with the wrappers from [Optional response cache](caching.md), or leave them off.
+`compliance_copilot/batching.py` runs an existing `AuditAgent` once per requirement. It does not change the agent, the pipeline, or the Pydantic audit models. Caching stays outside the runner: build the agent with the wrappers from [Optional response cache](caching.md), or leave them off. A future hosted limiter sits inside that cache and outside the client, as described in [API rate limiting](rate-limiting.md). The runner does not open either wrapper itself.
 
 This is requirement batching. It is not a provider batch API. Each requirement still has its own tool loop, and each tool call still depends on the previous observation.
 

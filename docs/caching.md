@@ -17,7 +17,7 @@ python scripts/run_agent_demo.py --cache
 
 `--legacy-retrieval` still turns agency-name normalization off for the RAG demo. When caching is enabled, that choice is part of the retrieval key.
 
-No hosted API and no rate limiter are involved. Both demos still load the local retriever and `LocalGenerator`.
+Both demos still load the local retriever and `LocalGenerator`. They do not apply `RateLimitedCallable`. That wrapper is for a future hosted client; see [API rate limiting](rate-limiting.md).
 
 ## Cache file
 

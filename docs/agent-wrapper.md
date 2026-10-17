@@ -84,7 +84,7 @@ This JSON is an integration artifact. Full team JSON/Markdown report design rema
 
 ### Caching and batching integration
 
-The demo can wrap the controller and retriever with the optional JSON cache. Cache keys include the ordered messages and generation settings, or the query, top_k, corpus hashes, and embedding settings. Cached text still goes through audit validation. `--batch-size` calls `AuditAgent.audit` once per requirement, in order, on this thread. Agent failures stay in `results` and `runs`. Failures before an `AgentResult` exists are listed in `batch_errors` and are not given a verdict.
+The demo can wrap the controller and retriever with the optional JSON cache. Cache keys include the ordered messages and generation settings, or the query, top_k, corpus hashes, and embedding settings. Cached text still goes through audit validation. `--batch-size` calls `AuditAgent.audit` once per requirement, in order, on this thread. Agent failures stay in `results` and `runs`. Failures before an `AgentResult` exists are listed in `batch_errors` and are not given a verdict. `RateLimitedCallable` is available for a future hosted client and is not applied to local Qwen. See [API rate limiting](rate-limiting.md).
 
 ## Limits and verification
 
