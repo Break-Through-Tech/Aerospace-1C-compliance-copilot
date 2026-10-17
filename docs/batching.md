@@ -13,7 +13,10 @@ Omitting `--batch-size` keeps the original per-requirement loop in `scripts/run_
 ```bash
 python scripts/run_agent_demo.py --batch-size 10
 python scripts/run_agent_demo.py --batch-size 10 --cache
+python scripts/demo_infrastructure_integration.py
 ```
+
+The last command is an offline demonstration. It uses the batch runner, the JSON cache, the hosted limiter, and a fake HTTP transport. It does not download a model or call a provider.
 
 `--batch-size` must be a positive integer. It can be combined with `--cache`. The report is still written with a temporary file, once per chunk, so a chunk of 1 saves after every requirement.
 

@@ -95,6 +95,8 @@ generator = CachedTextGenerator(
 
 `run_audits` does not know about the limiter. Pass an agent whose generator is already wrapped. The quota counts client calls, not requirements. One audit can call the model several times, and each retry counts. If retries are exhausted, that requirement keeps the agent's normal error result and later requirements still run.
 
+The demos pass `--max-requests`, `--period-seconds`, and `--max-attempts` into this wrapper only for `--backend api`. The defaults are 5, 60, and 3. Local Qwen ignores them. A provider can enforce a smaller quota than the one configured here. `scripts/demo_infrastructure_integration.py` exercises the same order with a fake clock and a fake transport.
+
 ## Hosted adapter
 
 `APIGenerator` performs one request. On HTTP 429 or a transient 5xx it raises `TransientAPIError` with `status_code` and `retry_after`. It does not retry on its own. The demos wrap it with `RateLimitedCallable`, then with `CachedTextGenerator` when `--cache` is set, and pass that callable to `AuditPipeline` and `AuditAgent`. `LocalGenerator` stays unwrapped. See [Optional hosted API generator](api-generator.md).

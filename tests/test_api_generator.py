@@ -520,8 +520,8 @@ def test_api_demo_skips_local_weights_and_keeps_batch_results(tmp_path, monkeypa
     real_limiter = demo.RateLimitedCallable
     wrapped_clients = []
 
-    def fast_limiter(inner):
-        wrapped_clients.append(inner)
+    def fast_limiter(inner, **kwargs):
+        wrapped_clients.append((inner, kwargs))
         return real_limiter(inner, max_requests=50, period_seconds=60, max_attempts=2)
 
     monkeypatch.setattr(demo, "RateLimitedCallable", fast_limiter)
@@ -556,7 +556,10 @@ def test_api_demo_skips_local_weights_and_keeps_batch_results(tmp_path, monkeypa
     assert sent["model"] == "cli-model"
     assert sent["max_tokens"] == 64
     assert len(wrapped_clients) == 1
-    assert isinstance(wrapped_clients[0], APIGenerator)
+    assert isinstance(wrapped_clients[0][0], APIGenerator)
+    assert wrapped_clients[0][1] == {
+        "max_requests": 5, "period_seconds": 60.0, "max_attempts": 3,
+    }
 
 
 def test_api_demo_missing_configuration_does_not_load_a_model(tmp_path, monkeypatch, capsys):

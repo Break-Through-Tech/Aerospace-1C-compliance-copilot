@@ -38,6 +38,10 @@ Demo flags for a hosted run:
 - `--max-new-tokens` is sent as `max_tokens`. The default is 768.
 - `--temperature` is sent as `temperature`. The default is 0. The local backend rejects any other value because Qwen decoding stays greedy.
 - `--timeout` is the socket timeout in seconds. The default is 60. The local backend ignores it.
+- `--max-requests` defaults to 5. It is the number of hosted attempts allowed during `--period-seconds`, which defaults to 60.
+- `--max-attempts` defaults to 3 and includes the first attempt. The limiter retries; `APIGenerator` does not.
+
+One agent requirement can use several hosted calls, and each retry counts. The defaults above can make a later requirement wait. Raise `--max-requests` to match the provider account. These flags do not change local Qwen. The provider's own quota can still be lower than the values you choose.
 
 A missing variable, a non-HTTPS remote URL, or a URL that contains credentials raises `ValueError` before a request. The message names the missing setting and does not include the secret or the rejected URL.
 
@@ -62,7 +66,7 @@ caller → CachedTextGenerator → RateLimitedCallable → APIGenerator
 
 - A hit returns stored text and does not call the API or take a quota slot.
 - A miss calls through `RateLimitedCallable`.
-- The demo uses the limiter defaults: 5 requests per 60 seconds, and 3 attempts including the first call.
+- The demo limiter defaults to 5 requests per 60 seconds and 3 attempts. `--max-requests`, `--period-seconds`, and `--max-attempts` change that quota for `--backend api` only.
 - HTTP 429, 500, 502, 503, and 504 raise `TransientAPIError` with `status_code` and `retry_after`. The limiter retries those, and `TimeoutError` and `ConnectionError`, using the rules in [API rate limiting](rate-limiting.md).
 - HTTP 401 and 403 are not retried.
 - A successful retry can be stored.
@@ -84,8 +88,11 @@ Use HTTPS for any machine you do not control. `COMPLIANCE_API_ALLOW_HTTP=1` is o
 The automated tests inject a fake transport or a fake `urlopen`. They do not use a live key.
 
 ```bash
-py -3 -m pytest tests/test_api_generator.py -q --tb=line -p no:cacheprovider
+py -3 -m pytest tests/test_api_generator.py tests/test_infrastructure_integration.py -q --tb=line -p no:cacheprovider
+py -3 scripts/demo_infrastructure_integration.py
 ```
+
+`scripts/demo_infrastructure_integration.py` runs the real agent, pipeline, JSON cache, batch runner, limiter, and API client against a fake transport. It shows one successful retry, one cache hit, and one exhausted 429. The cache and report stay in a temporary directory. The script does not use a provider key, the network, or local Qwen.
 
 ## Limitations
 

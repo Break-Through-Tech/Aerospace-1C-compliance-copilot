@@ -19,7 +19,7 @@ python scripts/compare_retrieval.py --output /tmp/retrieval-comparison.json
 
 The default examples are NASA-SR-001 through NASA-SR-010. Use `--ids` for selected requirements or `--all` for the full benchmark. The default output is `outputs/rag/demo.json`; pass a different `--output` to preserve the checked-in run. Exit status is 1 if any audit fails validation. Model loading or download errors stop the command without fabricating results.
 
-`--backend` chooses `local` (the default) or `api`. Local mode loads Qwen and does not need an API key. API mode sends the audit prompt to the hosted generator and does not load Qwen. See [Optional hosted API generator](api-generator.md).
+`--backend` chooses `local` (the default) or `api`. Local mode loads Qwen and does not need an API key. API mode sends the audit prompt to the hosted generator and does not load Qwen. `--max-requests`, `--period-seconds`, and `--max-attempts` apply only to that hosted quota. The RAG demo has no batch flag. See [Optional hosted API generator](api-generator.md).
 
 `--cache` stores identical retrieval and generation calls in `outputs/cache/generation_cache.json`. It is off by default, and `--cache-path` is ignored without it. `--legacy-retrieval` still controls agency-name normalization and, when caching is on, becomes part of the retrieval key. See [Optional response cache](caching.md).
 

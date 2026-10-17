@@ -17,7 +17,7 @@ python scripts/run_agent_demo.py --cache
 
 `--legacy-retrieval` still turns agency-name normalization off for the RAG demo. When caching is enabled, that choice is part of the retrieval key.
 
-The default `--backend local` still loads the local retriever and `LocalGenerator`. That path does not apply `RateLimitedCallable`. `--backend api` wraps the hosted client in the order described in [Optional hosted API generator](api-generator.md) and [API rate limiting](rate-limiting.md).
+The default `--backend local` still loads the local retriever and `LocalGenerator`. That path does not apply `RateLimitedCallable`. `--backend api` wraps the hosted client in the order described in [Optional hosted API generator](api-generator.md) and [API rate limiting](rate-limiting.md). Retrieval uses the same JSON file with its own key, so a repeated query can skip the retriever without skipping an uncached generation. `scripts/demo_infrastructure_integration.py` runs that arrangement offline.
 
 ## Cache file
 

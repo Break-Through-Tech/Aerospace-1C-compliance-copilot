@@ -5,6 +5,7 @@ import csv
 import hashlib
 import importlib.metadata
 import json
+import math
 import platform
 import sys
 from pathlib import Path
@@ -50,6 +51,12 @@ def build_parser():
                         help="Hosted sampling temperature. The local backend stays at 0.")
     parser.add_argument("--timeout", type=float, default=60,
                         help="Hosted request timeout in seconds. Ignored by the local backend.")
+    parser.add_argument("--max-requests", type=int, default=5,
+                        help="Hosted requests allowed during each period. Ignored by the local backend.")
+    parser.add_argument("--period-seconds", type=float, default=60,
+                        help="Length of the hosted quota window in seconds. Ignored by the local backend.")
+    parser.add_argument("--max-attempts", type=int, default=3,
+                        help="Hosted attempts per generation, including the first. Ignored by the local backend.")
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/agent/demo.json")
     parser.add_argument("--cache", action="store_true",
                         help="Cache identical retrieval and generation calls (default: off)")
@@ -77,6 +84,10 @@ def main():
         parser.error("max-new-tokens must be a positive integer")
     if args.backend == "local" and args.temperature != 0:
         parser.error("the local backend always uses temperature 0")
+    if args.max_requests < 1 or args.max_attempts < 1:
+        parser.error("max-requests and max-attempts must be positive integers")
+    if not math.isfinite(args.period_seconds) or args.period_seconds <= 0:
+        parser.error("period-seconds must be a positive number")
 
     endpoint = None
     temperature = None
@@ -91,7 +102,12 @@ def main():
             )
         except ValueError as exc:
             parser.error(str(exc))
-        generator = RateLimitedCallable(api)
+        generator = RateLimitedCallable(
+            api,
+            max_requests=args.max_requests,
+            period_seconds=args.period_seconds,
+            max_attempts=args.max_attempts,
+        )
         embedding_revision = args.embedding_revision
         loaded_revision = args.model_revision
         max_new_tokens = api.max_new_tokens
@@ -144,6 +160,9 @@ def main():
     if args.backend == "api":
         report["config"]["api_endpoint"] = endpoint
         report["config"]["temperature"] = temperature
+        report["config"]["max_requests"] = args.max_requests
+        report["config"]["period_seconds"] = args.period_seconds
+        report["config"]["max_attempts"] = args.max_attempts
     if args.cache:
         report["config"]["cache"] = cache_config(args.cache_path, ROOT)
     args.output.parent.mkdir(parents=True, exist_ok=True)
