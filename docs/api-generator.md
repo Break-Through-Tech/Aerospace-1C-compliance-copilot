@@ -29,7 +29,7 @@ Set these variables in the environment. Do not put them in source files, reports
 | `COMPLIANCE_API_BASE_URL` | yes | HTTPS endpoint, unless local HTTP is explicitly allowed |
 | `COMPLIANCE_API_KEY` | yes | Bearer token. Sent only on the `Authorization` header |
 | `COMPLIANCE_API_MODEL` | yes, unless `--model` is set to something other than the local Qwen id | Model name sent to the provider |
-| `COMPLIANCE_API_ALLOW_HTTP` | no | Set to `1` to permit an `http://` URL for a local server |
+| `COMPLIANCE_API_ALLOW_HTTP` | no | Set to `1` to permit `http://` only for `localhost`, `127.0.0.1`, or `::1` |
 
 `--model` overrides `COMPLIANCE_API_MODEL` when it is not the local Qwen default. Leaving `--model` at that default does not send the Qwen id to the hosted API.
 
@@ -81,7 +81,7 @@ Hosted cache keys add the normalized endpoint and the temperature to the existin
 
 The key is read from the environment or a constructor argument and placed on the `Authorization` header. It is not written to the cache key, the cache file, demo reports, logs, or exception text. Provider error bodies are discarded. Reports record `api_endpoint` as the normalized URL only, plus the model name and temperature.
 
-Use HTTPS for any machine you do not control. `COMPLIANCE_API_ALLOW_HTTP=1` is only for a local development server.
+The production transport does not follow redirects. A 3xx response fails with that status, and the bearer token is not sent to the `Location` host. `COMPLIANCE_API_ALLOW_HTTP=1` permits HTTP only for `localhost`, `127.0.0.1`, and `::1`. Any other host still requires HTTPS.
 
 ## Tests without a network call
 

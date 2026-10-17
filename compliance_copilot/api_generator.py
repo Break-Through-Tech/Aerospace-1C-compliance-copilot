@@ -30,6 +30,7 @@ _ENV_BASE_URL = "COMPLIANCE_API_BASE_URL"
 _ENV_API_KEY = "COMPLIANCE_API_KEY"
 _ENV_MODEL = "COMPLIANCE_API_MODEL"
 _ENV_ALLOW_HTTP = "COMPLIANCE_API_ALLOW_HTTP"
+_LOOPBACK_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 
 
 class APIResponseError(Exception):
@@ -47,8 +48,9 @@ class APIGenerator:
     COMPLIANCE_API_KEY, and COMPLIANCE_API_MODEL. A path that already ends in
     /chat/completions is used as-is. Any other path gets that suffix once.
 
-    Remote endpoints must be HTTPS. HTTP is accepted only when
-    allow_insecure_http is true or COMPLIANCE_API_ALLOW_HTTP is exactly "1".
+    Remote endpoints must be HTTPS. HTTP is accepted only for localhost,
+    127.0.0.1, or ::1 when allow_insecure_http is true or
+    COMPLIANCE_API_ALLOW_HTTP is exactly "1". Redirects are not followed.
     Userinfo, query strings, and fragments are rejected so they cannot reach
     the request or the cache identity.
     """
@@ -121,16 +123,17 @@ def normalize_chat_url(base_url: str, *, allow_insecure_http: bool) -> str:
             f"{_ENV_BASE_URL} must not include credentials, a query, or a fragment"
         )
     scheme = parts.scheme.lower()
-    if scheme == "http":
-        if not allow_insecure_http:
-            raise ValueError(
-                f"{_ENV_BASE_URL} must use HTTPS, or {_ENV_ALLOW_HTTP}=1 for a local endpoint"
-            )
-    elif scheme != "https":
-        raise ValueError(f"{_ENV_BASE_URL} must use HTTPS")
     host = parts.hostname
     if not host:
         raise ValueError(f"{_ENV_BASE_URL} must include a host")
+    if scheme == "http":
+        if not (allow_insecure_http and host.lower() in _LOOPBACK_HOSTS):
+            raise ValueError(
+                f"{_ENV_BASE_URL} must use HTTPS. "
+                f"HTTP is allowed only for localhost, 127.0.0.1, or ::1 when {_ENV_ALLOW_HTTP}=1"
+            )
+    elif scheme != "https":
+        raise ValueError(f"{_ENV_BASE_URL} must use HTTPS")
     path = (parts.path or "").rstrip("/")
     if path.endswith(CHAT_COMPLETIONS_SUFFIX):
         chat_path = path
@@ -145,11 +148,21 @@ def normalize_chat_url(base_url: str, *, allow_insecure_http: bool) -> str:
     return urlunsplit((scheme, netloc, chat_path, "", ""))
 
 
+class _RejectRedirects(urllib.request.HTTPRedirectHandler):
+    """Stop before a redirect so Authorization cannot be sent to another host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, msg, headers, fp)
+
+
+_OPENER = urllib.request.build_opener(_RejectRedirects)
+
+
 def _urllib_transport(request, timeout):
     """One blocking POST. Error bodies are discarded and never returned."""
 
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with _OPENER.open(request, timeout=timeout) as response:
             return response.status, dict(response.headers.items()), response.read()
     except urllib.error.HTTPError as exc:
         try:

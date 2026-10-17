@@ -1,5 +1,6 @@
 """Offline tests for the optional hosted generator. No network and no real credentials."""
 
+import http.client
 import io
 import json
 import sys
@@ -13,6 +14,7 @@ import pytest
 
 from compliance_copilot.agent import AgentResult, AuditAgent
 from compliance_copilot.api_generator import APIGenerator, APIResponseError, normalize_chat_url
+import compliance_copilot.api_generator as api_generator
 from compliance_copilot.batching import run_audits
 from compliance_copilot.cache_integration import CachedTextGenerator, generation_cache_key
 from compliance_copilot.pipeline import AuditPipeline
@@ -225,6 +227,31 @@ def test_remote_http_is_rejected_and_local_http_requires_an_explicit_opt_in():
     assert normalize_chat_url("http://127.0.0.1:8000/v1", allow_insecure_http=True) == (
         "http://127.0.0.1:8000/v1/chat/completions"
     )
+    assert normalize_chat_url("http://localhost:9/v1", allow_insecure_http=True) == (
+        "http://localhost:9/v1/chat/completions"
+    )
+    assert normalize_chat_url("http://[::1]:9/v1", allow_insecure_http=True) == (
+        "http://[::1]:9/v1/chat/completions"
+    )
+
+
+@pytest.mark.parametrize("base_url", [
+    "http://models.example.test/v1",
+    "http://evil.example/v1",
+    "http://10.1.2.3:8000/v1",
+    "http://127.0.0.2:8000/v1",
+])
+def test_remote_http_stays_rejected_when_local_http_is_enabled(base_url, monkeypatch):
+    monkeypatch.setenv("COMPLIANCE_API_ALLOW_HTTP", "1")
+    calls = []
+    with pytest.raises(ValueError) as caught:
+        APIGenerator(
+            base_url=base_url, api_key=SECRET, model="m", allow_insecure_http=True,
+            transport=lambda request, timeout: calls.append(request),
+        )
+    assert SECRET not in str(caught.value)
+    assert "evil" not in str(caught.value)
+    assert calls == []
 
 
 @pytest.mark.parametrize("status", [429, 500, 503, 401, 403, 418])
@@ -285,7 +312,7 @@ def test_urllib_timeout_and_connection_errors_do_not_expose_details(monkeypatch)
     def raise_timeout(request, timeout):
         raise urllib.error.URLError(TimeoutError(SECRET))
 
-    monkeypatch.setattr(urllib.request, "urlopen", raise_timeout)
+    monkeypatch.setattr(api_generator._OPENER, "open", raise_timeout)
     with pytest.raises(TimeoutError) as timed_out:
         APIGenerator(
             base_url="https://models.example.test/v1", api_key="sk-test-key", model="m",
@@ -297,7 +324,7 @@ def test_urllib_timeout_and_connection_errors_do_not_expose_details(monkeypatch)
     def raise_connection(request, timeout):
         raise urllib.error.URLError(OSError(SECRET))
 
-    monkeypatch.setattr(urllib.request, "urlopen", raise_connection)
+    monkeypatch.setattr(api_generator._OPENER, "open", raise_connection)
     with pytest.raises(ConnectionError) as failed:
         APIGenerator(
             base_url="https://models.example.test/v1", api_key="sk-test-key", model="m",
@@ -305,6 +332,53 @@ def test_urllib_timeout_and_connection_errors_do_not_expose_details(monkeypatch)
     assert str(failed.value) == "Hosted API connection failed."
     assert SECRET not in str(failed.value)
     assert failed.value.__cause__ is None
+
+
+def test_cross_origin_redirect_does_not_forward_the_bearer_token(monkeypatch):
+    seen = []
+
+    class FakeConnection:
+        def __init__(self, host, timeout=None, **kwargs):
+            self.host = host
+            self.sock = None
+
+        def set_debuglevel(self, level):
+            return None
+
+        def request(self, method, selector, body, headers, **kwargs):
+            seen.append((self.host, method, dict(headers)))
+
+        def getresponse(self):
+            headers = http.client.HTTPMessage()
+            if len(seen) == 1:
+                headers["Location"] = "https://evil.example/steal"
+                return _FakeHTTPResponse(302, headers, f'{{"error":"{SECRET}"}}'.encode())
+            headers["Content-Type"] = "application/json"
+            return _FakeHTTPResponse(200, headers, chat("should-not-run"))
+
+        def close(self):
+            return None
+
+    class _FakeHTTPResponse(io.BytesIO):
+        def __init__(self, status, headers, body):
+            super().__init__(body)
+            self.status = self.code = status
+            self.reason = "Found"
+            self.headers = headers
+
+        def info(self):
+            return self.headers
+
+    monkeypatch.setattr(http.client, "HTTPSConnection", FakeConnection)
+    with pytest.raises(TransientAPIError) as caught:
+        APIGenerator(
+            base_url="https://models.example.test/v1", api_key=SECRET, model="m",
+        )(MESSAGES)
+    assert caught.value.status_code == 302
+    assert SECRET not in str(caught.value)
+    assert "evil.example" not in str(caught.value)
+    assert [host for host, _method, _headers in seen] == ["models.example.test"]
+    assert seen[0][2].get("Authorization") == f"Bearer {SECRET}"
 
 
 def test_http_error_body_from_urllib_is_discarded(monkeypatch):
@@ -316,7 +390,7 @@ def test_http_error_body_from_urllib_is_discarded(monkeypatch):
             429, "Too Many Requests", headers, io.BytesIO(f'{{"error":"{SECRET}"}}'.encode()),
         )
 
-    monkeypatch.setattr(urllib.request, "urlopen", raise_http)
+    monkeypatch.setattr(api_generator._OPENER, "open", raise_http)
     with pytest.raises(TransientAPIError) as caught:
         APIGenerator(
             base_url="https://models.example.test/v1", api_key="sk-test-key", model="m",
