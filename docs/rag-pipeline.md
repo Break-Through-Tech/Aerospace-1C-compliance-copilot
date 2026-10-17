@@ -19,6 +19,10 @@ python scripts/compare_retrieval.py --output /tmp/retrieval-comparison.json
 
 The default examples are NASA-SR-001 through NASA-SR-010. Use `--ids` for selected requirements or `--all` for the full benchmark. The default output is `outputs/rag/demo.json`; pass a different `--output` to preserve the checked-in run. Exit status is 1 if any audit fails validation. Model loading or download errors stop the command without fabricating results.
 
+`--backend` chooses `local` (the default) or `api`. Local mode loads Qwen and does not need an API key. API mode sends the audit prompt to the hosted generator and does not load Qwen. `--max-requests`, `--period-seconds`, and `--max-attempts` apply only to that hosted quota. The RAG demo has no batch flag. See [Optional hosted API generator](api-generator.md).
+
+`--cache` stores identical retrieval and generation calls in `outputs/cache/generation_cache.json`. It is off by default, and `--cache-path` is ignored without it. `--legacy-retrieval` still controls agency-name normalization and, when caching is on, becomes part of the retrieval key. See [Optional response cache](caching.md).
+
 [The demonstration notebook](../notebooks/RAG_Audit_Demo.ipynb) supports a local checkout and Colab. In Colab, select a GPU runtime before running setup. The notebook displays the saved run by default; set `RUN_MODEL = True` for fresh inference. Colab runtime execution has not been verified here.
 
 On macOS, the retriever defaults `OMP_NUM_THREADS` to 1 before native imports to avoid a FAISS/PyTorch OpenMP crash observed during validation. If a notebook already imported those libraries, restart its kernel or set the variable before starting Jupyter.

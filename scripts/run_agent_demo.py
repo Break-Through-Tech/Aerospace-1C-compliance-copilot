@@ -5,6 +5,7 @@ import csv
 import hashlib
 import importlib.metadata
 import json
+import math
 import platform
 import sys
 from pathlib import Path
@@ -14,7 +15,14 @@ sys.path.insert(0, str(ROOT))
 
 from compliance_copilot import AuditPipeline
 from compliance_copilot.agent import AuditAgent
+from compliance_copilot.api_generator import APIGenerator
+from compliance_copilot.batching import run_audits
+from compliance_copilot.cache_integration import (
+    DEFAULT_CACHE_PATH, cache_config, corpus_sha256, wrap_local_callables,
+)
 from compliance_copilot.generation import DEFAULT_MODEL, LocalGenerator
+from compliance_copilot.rate_limit import RateLimitedCallable
+from compliance_copilot.request_utils import GenerationCache
 from compliance_copilot.retrieval import EMBEDDING_MODEL, build_retriever
 
 SOURCES = [
@@ -26,7 +34,7 @@ SOURCES = [
 ]
 
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--ids", nargs="+")
@@ -36,7 +44,31 @@ def main():
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--model-revision")
     parser.add_argument("--embedding-revision")
+    parser.add_argument("--backend", choices=("local", "api"), default="local",
+                        help="local Qwen (default) or an OpenAI-compatible hosted API")
+    parser.add_argument("--max-new-tokens", type=int, default=768)
+    parser.add_argument("--temperature", type=float, default=0,
+                        help="Hosted sampling temperature. The local backend stays at 0.")
+    parser.add_argument("--timeout", type=float, default=60,
+                        help="Hosted request timeout in seconds. Ignored by the local backend.")
+    parser.add_argument("--max-requests", type=int, default=5,
+                        help="Hosted requests allowed during each period. Ignored by the local backend.")
+    parser.add_argument("--period-seconds", type=float, default=60,
+                        help="Length of the hosted quota window in seconds. Ignored by the local backend.")
+    parser.add_argument("--max-attempts", type=int, default=3,
+                        help="Hosted attempts per generation, including the first. Ignored by the local backend.")
     parser.add_argument("--output", type=Path, default=ROOT / "outputs/agent/demo.json")
+    parser.add_argument("--cache", action="store_true",
+                        help="Cache identical retrieval and generation calls (default: off)")
+    parser.add_argument("--cache-path", type=Path, default=ROOT / DEFAULT_CACHE_PATH,
+                        help="JSON cache file used only together with --cache")
+    parser.add_argument("--batch-size", type=int, default=None,
+                        help="Release finished audits in chunks of this size (default: original per-requirement loop)")
+    return parser
+
+
+def main():
+    parser = build_parser()
     args = parser.parse_args()
     with (ROOT / "data/benchmark/requirements.csv").open() as stream:
         rows = list(csv.DictReader(stream))
@@ -46,23 +78,78 @@ def main():
         parser.error("Requirement IDs must be unique and exist in data/benchmark/requirements.csv")
     if args.top_k < 1 or not 1 <= args.max_steps <= 32:
         parser.error("top-k must be positive and max-steps must be from 1 to 32")
+    if args.batch_size is not None and args.batch_size < 1:
+        parser.error("batch-size must be a positive integer")
+    if args.max_new_tokens < 1:
+        parser.error("max-new-tokens must be a positive integer")
+    if args.backend == "local" and args.temperature != 0:
+        parser.error("the local backend always uses temperature 0")
+    if args.max_requests < 1 or args.max_attempts < 1:
+        parser.error("max-requests and max-attempts must be positive integers")
+    if not math.isfinite(args.period_seconds) or args.period_seconds <= 0:
+        parser.error("period-seconds must be a positive number")
 
-    from huggingface_hub import HfApi
-    embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
-    model_revision = args.model_revision or HfApi().model_info(args.model).sha
+    endpoint = None
+    temperature = None
+    if args.backend == "api":
+        # Do not load Qwen or look up a local chat-model revision.
+        try:
+            api = APIGenerator(
+                model=None if args.model == DEFAULT_MODEL else args.model,
+                max_new_tokens=args.max_new_tokens,
+                temperature=args.temperature,
+                timeout=args.timeout,
+            )
+        except ValueError as exc:
+            parser.error(str(exc))
+        generator = RateLimitedCallable(
+            api,
+            max_requests=args.max_requests,
+            period_seconds=args.period_seconds,
+            max_attempts=args.max_attempts,
+        )
+        embedding_revision = args.embedding_revision
+        loaded_revision = args.model_revision
+        max_new_tokens = api.max_new_tokens
+        device = "api"
+        backend_name = "openai-compatible"
+        model_name = api.model
+        do_sample = api.temperature > 0
+        endpoint = api.endpoint_identity
+        temperature = api.temperature
+    else:
+        from huggingface_hub import HfApi
+        embedding_revision = args.embedding_revision or HfApi().model_info(EMBEDDING_MODEL).sha
+        model_revision = args.model_revision or HfApi().model_info(args.model).sha
+        generator = LocalGenerator(args.model, revision=model_revision, max_new_tokens=args.max_new_tokens)
+        loaded_revision = generator.revision
+        max_new_tokens = generator.max_new_tokens
+        device = generator.device
+        backend_name = "transformers"
+        model_name = args.model
+        do_sample = False
     retriever = build_retriever(ROOT, revision=embedding_revision)
-    generator = LocalGenerator(args.model, revision=model_revision)
+    if args.cache:
+        # The agent demo always normalizes agency names.
+        retriever, generator = wrap_local_callables(
+            retriever, generator, GenerationCache(args.cache_path),
+            backend=backend_name, model=model_name, revision=loaded_revision,
+            max_new_tokens=max_new_tokens, do_sample=do_sample, device=device,
+            endpoint=endpoint, temperature=temperature,
+            embedding_model=EMBEDDING_MODEL, embedding_revision=embedding_revision,
+            normalize_agency=True, corpus_sha256=corpus_sha256(ROOT),
+        )
     pipeline = AuditPipeline(retriever, generator, top_k=args.top_k)
     # One loaded model serves both the controller and the existing audit prompt.
     agent = AuditAgent(pipeline, generator, max_steps=args.max_steps)
     report = {
         "config": {
-            "mode": "tool_calling_agent", "backend": "transformers",
-            "model": args.model, "model_revision": generator.revision,
+            "mode": "tool_calling_agent", "backend": backend_name,
+            "model": model_name, "model_revision": loaded_revision,
             "embedding_model": EMBEDDING_MODEL, "embedding_revision": embedding_revision,
             "top_k": args.top_k, "max_steps": args.max_steps, "normalize_agency": True,
-            "do_sample": False, "max_new_tokens": generator.max_new_tokens,
-            "device": generator.device, "python": platform.python_version(),
+            "do_sample": do_sample, "max_new_tokens": max_new_tokens,
+            "device": device, "python": platform.python_version(),
             "packages": {p: importlib.metadata.version(p) for p in
                          ["torch", "transformers", "sentence-transformers", "faiss-cpu", "pydantic"]},
         },
@@ -70,19 +157,62 @@ def main():
         # Same AuditResult rows consumed by summarize_rag_run.py, including failures.
         "results": [], "runs": [],
     }
+    if args.backend == "api":
+        report["config"]["api_endpoint"] = endpoint
+        report["config"]["temperature"] = temperature
+        report["config"]["max_requests"] = args.max_requests
+        report["config"]["period_seconds"] = args.period_seconds
+        report["config"]["max_attempts"] = args.max_attempts
+    if args.cache:
+        report["config"]["cache"] = cache_config(args.cache_path, ROOT)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    for key in ids:
-        # Labels, expected clauses, and rationales never enter either model prompt.
-        run = agent.audit(key, by_id[key]["requirement_text"])
-        report["results"].append(run.result.model_dump())
-        report["runs"].append(run.model_dump())
+
+    def write_report():
         temporary = args.output.with_suffix(args.output.suffix + ".tmp")
         temporary.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
         temporary.replace(args.output)
+
+    def print_run(key, run):
         print(key, run.termination,
               run.result.audit.verdict if run.result.audit else run.result.error_code,
               [step.tool for step in run.steps], flush=True)
-    return 0 if all(row["status"] == "ok" for row in report["results"]) else 1
+
+    if args.batch_size is None:
+        for key in ids:
+            # Labels, expected clauses, and rationales never enter either model prompt.
+            run = agent.audit(key, by_id[key]["requirement_text"])
+            report["results"].append(run.result.model_dump())
+            report["runs"].append(run.model_dump())
+            write_report()
+            print_run(key, run)
+    else:
+        # Chunk size only groups finished rows. Each requirement still calls audit() once.
+        report["config"]["batch_size"] = args.batch_size
+        report["batch_errors"] = []
+
+        def save_chunk(chunk):
+            for item in chunk:
+                if item.result is None:
+                    report["batch_errors"].append({
+                        "index": item.index,
+                        "requirement_id": item.requirement_id,
+                        "error": item.error.model_dump(),
+                    })
+                    print(item.requirement_id, "batch_error", item.error.code, flush=True)
+                else:
+                    report["results"].append(item.result.result.model_dump())
+                    report["runs"].append(item.result.model_dump())
+                    print_run(item.requirement_id, item.result)
+            write_report()
+
+        run_audits(
+            agent,
+            ((key, by_id[key]["requirement_text"]) for key in ids),
+            batch_size=args.batch_size,
+            on_chunk=save_chunk,
+        )
+    batch_failed = bool(report.get("batch_errors"))
+    return 0 if all(row["status"] == "ok" for row in report["results"]) and not batch_failed else 1
 
 
 if __name__ == "__main__":

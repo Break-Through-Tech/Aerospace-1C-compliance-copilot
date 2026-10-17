@@ -16,6 +16,12 @@ python scripts/summarize_rag_run.py outputs/agent/demo.json --output outputs/age
 
 The default demo audits NASA-SR-001, NASA-SR-002, and NASA-SR-005. The initial controller prompt excludes the benchmark identifier, and the audit prompt uses the requirement text and retrieved sources. Expected verdicts, assigned reference IDs, and benchmark rationales are used only by the separate scoring script. After checking, tool observations include the requirement identifier for traceability; the verdict can no longer change. Use `--ids NASA-SR-003 NASA-SR-010` to select cases or `--all` for the development benchmark. `--output` selects the result path. `--model-revision` and `--embedding-revision` pin model commits; the resolved revisions, package versions, and source hashes are saved in each report.
 
+`--backend` chooses `local` (the default) or `api`. Local mode loads Qwen and does not read API settings. API mode uses the hosted generator for both the controller and the audit prompt, and it does not load Qwen. `--max-requests`, `--period-seconds`, and `--max-attempts` configure that hosted quota and do not wrap local Qwen. See [Optional hosted API generator](api-generator.md).
+
+`--cache` stores identical retrieval and generation calls in `outputs/cache/generation_cache.json`. It is off by default, and `--cache-path` is ignored without it. The same wrapped generator is both the audit model and the controller. See [Optional response cache](caching.md).
+
+`--batch-size 10` audits requirements through the sequential batch runner and saves after each chunk. Omit it to keep the original per-requirement loop. `batch_size` groups finished rows; it does not merge prompts or run the local model concurrently. See [Batch audits](batching.md).
+
 [Agent_Audit_Demo.ipynb](../notebooks/Agent_Audit_Demo.ipynb) displays the saved evidence and can optionally run the model locally or in Colab. Live Colab execution has not been verified.
 
 ## Tools and ownership
@@ -80,7 +86,7 @@ This JSON is an integration artifact. Full team JSON/Markdown report design rema
 
 ### Caching and batching integration
 
-The caching team can wrap the controller or generator callable without changing tool contracts. Cache keys need the complete ordered messages and model/generation configuration, not only the requirement text. Retrieval caching also needs the query, top_k, corpus version, and embedding configuration. Do not cache failed calls as successful audits. Batch orchestration should preserve one isolated `AgentResult` per requirement; the demo executes sequentially.
+The demo can wrap the controller and retriever with the optional JSON cache. Cache keys include the ordered messages and generation settings, or the query, top_k, corpus hashes, and embedding settings. Cached text still goes through audit validation. `--batch-size` calls `AuditAgent.audit` once per requirement, in order, on this thread. Agent failures stay in `results` and `runs`. Failures before an `AgentResult` exists are listed in `batch_errors` and are not given a verdict. `--backend api` places `RateLimitedCallable` around the hosted client and inside the cache. Local Qwen is not rate limited. See [API rate limiting](rate-limiting.md).
 
 ## Limits and verification
 
