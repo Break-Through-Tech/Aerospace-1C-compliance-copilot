@@ -1,11 +1,9 @@
-# AI Studio Challenge Project Title
+# Aerospace 1C - Compliance Copilot
 
-> 💡 **Note for the team:** This is just a template. Update the above title with your AI Studio Challenge Project name. Remove all guidance notes and example text in this template and populate this README with your own content. You can work on this README throughout AI Studio, and get feedback from your AI Studio Coach and Challenge Advisor before finalizing it.  
 
 ## Tool-calling agent
 
 Run `python scripts/run_agent_demo.py` to audit benchmark requirements through model-selected retrieval, checking, and gap-logging tools. See [the agent contract and run instructions](docs/agent-wrapper.md) and [the demonstration notebook](notebooks/Agent_Audit_Demo.ipynb). The agent reuses the validated baseline and exports compatible results plus tool traces.
-
 
 ## RAG audit baseline
 
@@ -20,11 +18,11 @@ Run the structured requirement audit with `python scripts/run_rag_demo.py` after
 
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Taylor Nguyen    | @taylornguyen | Data exploration, visualization, overall project coordination            |
-| Jordan Ramirez   | @jramirez     | Data collection, exploratory data analysis (EDA), dataset documentation  |
-| Amina Hassan     | @aminahassan  | Data preprocessing, feature engineering, data validation                 |
-| Priya Mehta      | @pmehta       | Model selection, hyperparameter tuning, model training and optimization  |
-| Chris Park       | @chrispark    | Model evaluation, performance analysis, results interpretation           |
+| Alan Guo         | @weihaog1     |                                                                          |
+| Nam Nguyen       | @bnam2103     |                                                                          |
+| Shahreen Chowdhury| @ShahreenC   |                                                                          |
+| Meryum Sohail    | @MeryumSohail |                                                                          |
+| Garima Chauhan   | @garimac921   |                                                                          |
 
 ---
 
