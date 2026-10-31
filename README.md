@@ -18,17 +18,16 @@ Run the structured requirement audit with `python scripts/run_rag_demo.py` after
 
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Alan Guo         | @weihaog1     |                                                                          |
-| Nam Nguyen       | @bnam2103     |                                                                          |
-| Shahreen Chowdhury| @ShahreenC   |                                                                          |
-| Meryum Sohail    | @MeryumSohail |                                                                          |
-| Garima Chauhan   | @garimac921   |                                                                          |
+| Alan Guo         | @weihaog1     |   TBA                                                                       |
+| Nam Nguyen       | @bnam2103     |   TBA                                                                       |
+| Shahreen Chowdhury| @ShahreenC   |   TBA                                                                       |
+| Meryum Sohail    | @MeryumSohail |    TBA                                                                      |
+| Garima Chauhan   | @garimac921   |    TBA                                                                      |
 
 ---
 
 ## 🎯 **Project Highlights**
 
-**Example:**
 
 - Developed a machine learning model using `[model type/technique]` to address `[challenge project task]`.
 - Achieved `[key metric or result]`, demonstrating `[value or impact]` for `[host company]`.
@@ -124,6 +123,6 @@ Cite relevant papers, articles, or resources that supported your project.
 
 ---
 
-## 🙏 **Acknowledgements** (Optional but encouraged)
+##  **Acknowledgements**
 
-Thank your Challenge Advisor, host company representatives, TA, and others who supported your project.
+We would like to thank firstly Break Through Tech for giving us the opportunity to work on this project. We have all learned so much and broadened our skillset that we will bring with us in our future endeavors. We would also like to thank our Challenge Advisor, Beth Parnell, who helped us immensely with out project. It is impossible to imagine our project having flourished without her guidance and willingness to help. 
