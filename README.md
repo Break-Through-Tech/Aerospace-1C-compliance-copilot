@@ -1,5 +1,9 @@
 # Aerospace 1C - Compliance Copilot
 
+## December research and stretch goals
+
+See the [research index](research/README.md) for the team's planning documents. Alan's [stretch-goal plan](research/december-stretch-goals-alan-guo.md) and [PDF](research/December%20Stretch%20Goals%20Alan%20Guo.pdf) cover LangGraph orchestration, a specialist-review experiment, and a second-standard pilot. These are proposed experiments; the report does not claim that they are implemented.
+
 
 ## Tool-calling agent
 
