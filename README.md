@@ -2,7 +2,7 @@
 
 ## December research and stretch goals
 
-See the [research index](research/README.md) for the team's planning documents. Alan's [stretch-goal plan](research/december-stretch-goals-alan-guo.md) and [PDF](research/December%20Stretch%20Goals%20Alan%20Guo.pdf) cover LangGraph orchestration, a specialist-review experiment, and a second-standard pilot. These are proposed experiments; the report does not claim that they are implemented.
+See the [research index](research/README.md) for the team's planning documents. Alan's [Google Doc](https://docs.google.com/document/d/1bqGSMhzRNWW2Ffo_2Kc_tKUvSJLFFemaOslqg0f-Uyo/edit) and [repository copy](research/december-stretch-goals-alan-guo.md) focus on a fully functional web app for submitting requirements, running audits, reviewing citations, and saving results. LangGraph and additional standards are follow-up options.
 
 
 ## Tool-calling agent
