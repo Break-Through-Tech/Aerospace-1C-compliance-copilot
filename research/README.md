@@ -4,7 +4,7 @@ Research prepared for Aerospace 1C's November 7, 2026 team check-in. These docum
 
 | Workstream | Authors | Documents |
 | --- | --- | --- |
-| Stretch goals | Alan Guo | [Google Doc](https://docs.google.com/document/d/1bqGSMhzRNWW2Ffo_2Kc_tKUvSJLFFemaOslqg0f-Uyo/edit), [repository copy](december-stretch-goals-alan-guo.md) |
+| Stretch goals | Alan Guo | [Research PDF](December%20Stretch%20Goals%20Alan%20Guo.pdf), [Google Doc](https://docs.google.com/document/d/1bqGSMhzRNWW2Ffo_2Kc_tKUvSJLFFemaOslqg0f-Uyo/edit), [repository copy](december-stretch-goals-alan-guo.md) |
 | Baseline vs. Agent evaluation | Nam Nguyen and Shahreen Chowdhury | [Research PDF](December%20Deliverable%20Research%20Nam%20%26%20Shahreen%20Aerospace%201C.pdf), [issue 23](https://github.com/Break-Through-Tech/Aerospace-1C-compliance-copilot/issues/23) |
 | Qualitative error analysis | Garima Chauhan and Meryum Sohail | [Research PDF](Qualitative%20Error%20Analysis_%20Research.pdf), [issue 22](https://github.com/Break-Through-Tech/Aerospace-1C-compliance-copilot/issues/22) |
 
