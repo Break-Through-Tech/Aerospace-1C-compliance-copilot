@@ -19,7 +19,7 @@ Run the structured requirement audit with `python scripts/run_rag_demo.py` after
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
 | Alan Guo         | @weihaog1     |   TBA                                                                       |
-| Nam Nguyen       | @bnam2103     |   TBA                                                                       |
+| Nam Nguyen       | @bnam2103     |   Implemented FAISS retrieval, caching, batching, API reliability improvements, and supported benchmark evaluation and validation.|
 | Shahreen Chowdhury| @ShahreenC   |   TBA                                                                       |
 | Meryum Sohail    | @MeryumSohail |    TBA                                                                      |
 | Garima Chauhan   | @garimac921   |    TBA                                                                      |
