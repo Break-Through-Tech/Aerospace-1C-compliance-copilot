@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from compliance_copilot.cache_integration import cache_config
 from scripts.compare_benchmark_runs import (
     compare, gap_detection, load_benchmark, mcnemar_exact, per_class, render_markdown, restrict_report,
     score_report,
@@ -140,6 +141,39 @@ def test_config_mismatch_is_rejected_but_environment_only_warns():
     outcome, _ = compare(report(["Meets"] * 4), agent_report(["Meets"] * 4, config=agent_config),
                          BENCHMARK, resamples=0)
     assert outcome["warnings"] == ["Environment differs in 'device': baseline='cpu', agent='cuda'"]
+
+
+def test_shared_generation_cache_warns_without_changing_metrics(monkeypatch):
+    # The same file given as a relative and an absolute path records the same label.
+    monkeypatch.chdir(ROOT)
+    relative = cache_config(Path("outputs/cache/generation_cache.json"), ROOT)
+    absolute = cache_config(ROOT / "outputs/cache/generation_cache.json", ROOT)
+    verdicts = ["Meets", "Partial", "Gap", "Gap"]
+    plain, _ = compare(report(verdicts), agent_report(verdicts), BENCHMARK, resamples=200)
+    shared, _ = compare(report(verdicts, config={**CONFIG, "cache": relative}),
+                        agent_report(verdicts, config={**AGENT_CONFIG, "cache": absolute}),
+                        BENCHMARK, resamples=200)
+    assert len(shared["warnings"]) == 1
+    assert "same generation cache 'outputs/cache/generation_cache.json'" in shared["warnings"][0]
+    assert {k: v for k, v in shared.items() if k != "warnings"} == {k: v for k, v in plain.items() if k != "warnings"}
+
+
+CACHE = {"enabled": True, "schema_version": 1, "path": "outputs/cache/generation_cache.json"}
+
+
+@pytest.mark.parametrize("baseline_cache, agent_cache", [
+    (CACHE, {**CACHE, "path": "outputs/cache/agent.json"}),
+    (None, CACHE),
+    (CACHE, None),
+    ({**CACHE, "enabled": False}, CACHE),
+])
+def test_separate_or_disabled_caches_do_not_warn(baseline_cache, agent_cache):
+    baseline_config = CONFIG if baseline_cache is None else {**CONFIG, "cache": baseline_cache}
+    agent_config = AGENT_CONFIG if agent_cache is None else {**AGENT_CONFIG, "cache": agent_cache}
+    verdicts = ["Meets", "Partial", "Gap", "Gap"]
+    outcome, _ = compare(report(verdicts, config=baseline_config),
+                         agent_report(verdicts, config=agent_config), BENCHMARK, resamples=0)
+    assert outcome["warnings"] == []
 
 
 def test_swapped_inputs_are_rejected():

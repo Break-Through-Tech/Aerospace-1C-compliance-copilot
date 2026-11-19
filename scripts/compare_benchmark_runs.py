@@ -111,6 +111,16 @@ def check_input_hashes(baseline_hashes, agent_hashes):
             if baseline_hashes[name] != agent_hashes[name]]
 
 
+def check_shared_cache(baseline_config, agent_config):
+    """A shared generation cache can replay one system's outputs in the other run."""
+    caches = [config.get("cache") or {} for config in (baseline_config, agent_config)]
+    if not all(cache.get("enabled") for cache in caches) or caches[0].get("path") != caches[1].get("path"):
+        return []
+    # cache_config records repo-relative paths, but only the file name for caches outside the repo.
+    return [f"Both runs used the same generation cache '{caches[0].get('path')}'; identical outputs "
+            "may be cache reuse rather than independent model runs. Rerun with separate or no caches."]
+
+
 # ---------------------------------------------------------------- per-requirement records
 
 def retrieval_queries(run):
@@ -331,6 +341,7 @@ def compare(baseline_report, agent_report, benchmark, *, resamples=10000, seed=0
     warnings += check_configs(baseline_report["config"], agent_report["config"])
     warnings += check_input_hashes(baseline_report.get("input_sha256", {}),
                                    agent_report.get("input_sha256", {}))
+    warnings += check_shared_cache(baseline_report["config"], agent_report["config"])
     baseline = score_report(baseline_report, benchmark)
     agent = score_report(agent_report, benchmark)
     records = {"baseline": baseline, "agent": agent}
