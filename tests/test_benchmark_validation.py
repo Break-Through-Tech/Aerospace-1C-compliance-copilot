@@ -2,6 +2,7 @@
 
 import copy
 import importlib.util
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -55,6 +56,35 @@ class BenchmarkValidationTests(unittest.TestCase):
             self.bundle['folder'] = folder
             with self.assertRaisesRegex(ValueError, 'File hash mismatch'):
                 validator.validate(self.bundle)
+
+    def test_crlf_copy_is_rejected_with_line_ending_hint(self):
+        # Rebuild LF bytes so the result does not depend on how this checkout was made.
+        with tempfile.TemporaryDirectory() as path:
+            folder = Path(path)
+            for name in self.bundle['manifest']['files']:
+                lf = (self.bundle['folder'] / name).read_bytes().replace(b'\r\n', b'\n')
+                (folder / name).write_bytes(lf)
+            (folder / 'review.csv').write_bytes((folder / 'review.csv').read_bytes().replace(b'\n', b'\r\n'))
+            self.bundle['folder'] = folder
+            with self.assertRaises(ValueError) as caught:
+                validator.validate(self.bundle)
+            self.assertEqual(str(caught.exception).count('File hash mismatch'), 1)
+            self.assertRegex(str(caught.exception), r'review\.csv\. Only line endings differ')
+
+    def test_hashed_files_keep_lf_on_checkout(self):
+        # Git must not rewrite line endings of files whose bytes are hashed.
+        paths = [f'data/benchmark/{name}' for name in self.bundle['manifest']['files']]
+        paths += [p.relative_to(ROOT).as_posix()
+                  for folder in ('compliance_copilot', 'scripts') for p in sorted((ROOT / folder).glob('*.py'))]
+        try:
+            output = subprocess.run(['git', 'check-attr', 'eol', '--', *paths], cwd=ROOT,
+                                    capture_output=True, text=True, check=True).stdout
+        except (OSError, subprocess.CalledProcessError):
+            self.skipTest('git is unavailable or this is not a git checkout')
+        lines = output.splitlines()
+        self.assertEqual(len(lines), len(paths))
+        for line in lines:
+            self.assertTrue(line.endswith(': eol: lf'), line)
 
 
 if __name__ == '__main__':
