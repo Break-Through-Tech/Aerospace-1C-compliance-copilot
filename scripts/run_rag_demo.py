@@ -58,7 +58,7 @@ def build_parser():
 def main():
     parser = build_parser()
     args = parser.parse_args()
-    rows = list(csv.DictReader((ROOT / "data/benchmark/requirements.csv").open()))
+    rows = list(csv.DictReader((ROOT / "data/benchmark/requirements.csv").open(encoding="utf-8", newline="")))
     by_id = {r["requirement_id"]: r for r in rows}
     args.ids = list(by_id) if args.all else (args.ids or [f"NASA-SR-{i:03d}" for i in range(1, 11)])
     if any(i not in by_id for i in args.ids):
@@ -149,7 +149,7 @@ def main():
         # Expected clause IDs, verdicts, and rationales never enter the pipeline.
         result = pipeline.audit(requirement_id, by_id[requirement_id]["requirement_text"])
         report["results"].append(result.model_dump())
-        args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+        args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print(requirement_id, result.status, result.audit.verdict if result.audit else result.error_code, flush=True)
     return 0 if all(r["status"] == "ok" for r in report["results"]) else 1
 

@@ -70,7 +70,7 @@ def build_parser():
 def main():
     parser = build_parser()
     args = parser.parse_args()
-    with (ROOT / "data/benchmark/requirements.csv").open() as stream:
+    with (ROOT / "data/benchmark/requirements.csv").open(encoding="utf-8", newline="") as stream:
         rows = list(csv.DictReader(stream))
     by_id = {row["requirement_id"]: row for row in rows}
     ids = list(by_id) if args.all else (args.ids or ["NASA-SR-001", "NASA-SR-002", "NASA-SR-005"])
@@ -169,7 +169,7 @@ def main():
 
     def write_report():
         temporary = args.output.with_suffix(args.output.suffix + ".tmp")
-        temporary.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+        temporary.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         temporary.replace(args.output)
 
     def print_run(key, run):
