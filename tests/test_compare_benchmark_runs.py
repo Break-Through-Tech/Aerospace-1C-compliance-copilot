@@ -7,7 +7,8 @@ from pathlib import Path
 import pytest
 
 from scripts.compare_benchmark_runs import (
-    compare, gap_detection, load_benchmark, mcnemar_exact, per_class, restrict_report, score_report,
+    compare, gap_detection, load_benchmark, mcnemar_exact, per_class, render_markdown, restrict_report,
+    score_report,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,6 +81,7 @@ def test_invalid_output_is_wrong_and_not_flagged():
     gap = gap_detection(records)
     # R3 is a gold Gap with an invalid output: a missed gap, not a false positive.
     assert (gap["tp"], gap["fp"], gap["fn"], gap["tn"]) == (2, 0, 1, 1)
+    assert gap["false_compliance"] == 0
     assert records[2]["verdict_matches"] is False
     outcome, _ = compare(report(["Meets", "Partial", None, "Gap"]),
                          report(["Meets", "Partial", "Gap", "Gap"]), BENCHMARK, resamples=0)
@@ -96,6 +98,7 @@ def test_hand_computed_precision_recall_f1():
     records = score_report(report(["Partial", "Partial", "Gap", "Meets"]), BENCHMARK)
     gap = gap_detection(records)
     assert (gap["tp"], gap["fp"], gap["fn"]) == (2, 1, 1)
+    assert gap["false_compliance"] == 1
     assert gap["precision"] == pytest.approx(2 / 3)
     assert gap["recall"] == pytest.approx(2 / 3)
     classes = per_class(records)
@@ -104,6 +107,22 @@ def test_hand_computed_precision_recall_f1():
     assert classes["Gap"]["recall"] == pytest.approx(0.5)
     assert classes["Meets"]["f1"] == 0.0
     assert classes["macro"]["f1"] == pytest.approx((0 + 2 / 3 + 2 / 3) / 3)
+
+
+def test_false_compliance_counts_cleared_gaps_but_not_invalid_outputs():
+    # Gold: Meets, Partial, Gap, Gap. Baseline clears R2 and R3 as Meets; R4 is invalid.
+    baseline = report(["Meets", "Meets", "Meets", None])
+    agent = agent_report(["Partial", "Meets", "Gap", "Gap"])
+    outcome, _ = compare(baseline, agent, BENCHMARK, resamples=0)
+    baseline_gap = outcome["systems"]["baseline"]["gap_detection"]
+    agent_gap = outcome["systems"]["agent"]["gap_detection"]
+    assert (baseline_gap["fn"], baseline_gap["false_compliance"]) == (3, 2)
+    assert (agent_gap["fp"], agent_gap["fn"], agent_gap["false_compliance"]) == (1, 1, 1)
+    inputs = {name: {"path": f"{name}.json", "config": CONFIG} for name in ("baseline", "agent")}
+    text = render_markdown(outcome, inputs)
+    baseline_text, agent_text = text.split("## Agent details")
+    assert "False compliance (gold Partial or Gap predicted Meets): 2." in baseline_text
+    assert "False compliance (gold Partial or Gap predicted Meets): 1." in agent_text
 
 
 def test_missing_id_is_rejected():

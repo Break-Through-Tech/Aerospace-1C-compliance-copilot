@@ -43,6 +43,7 @@ POLICY = {
     "denominator": "all benchmark IDs in the comparison; failures are never dropped",
     "invalid_output": "counted as a wrong verdict and as not flagged (negative) for gap detection",
     "gap_detection_positive_class": sorted(POSITIVE),
+    "false_compliance": "gold Partial or Gap predicted Meets; invalid outputs are not counted",
     "undefined_precision_or_recall": "reported as 0.0 (same as scikit-learn zero_division=0)",
     "confidence_intervals": "percentile bootstrap over requirement IDs, paired across systems",
     "paired_test": "exact two-sided McNemar test on per-ID correctness",
@@ -181,8 +182,11 @@ def gap_detection(records):
     fp = sum(r["expected_verdict"] not in POSITIVE and is_flagged(r) for r in records)
     fn = sum(r["expected_verdict"] in POSITIVE and not is_flagged(r) for r in records)
     tn = len(records) - tp - fp - fn
+    # The subset of fn where a real gap was cleared as Meets; invalid outputs stay out of it.
+    false_compliance = sum(r["expected_verdict"] in POSITIVE and r["predicted_verdict"] == "Meets"
+                           for r in records)
     precision, recall = ratio(tp, tp + fp), ratio(tp, tp + fn)
-    return {"tp": tp, "fp": fp, "fn": fn, "tn": tn,
+    return {"tp": tp, "fp": fp, "fn": fn, "tn": tn, "false_compliance": false_compliance,
             "precision": precision, "recall": recall, "f1": f1(precision, recall)}
 
 
@@ -425,7 +429,8 @@ def render_markdown(result, inputs):
             lines.append(f"| {label} | {c['support']} | {c['precision']:.3f} | {c['recall']:.3f} | {c['f1']:.3f} |")
         gap = metrics["gap_detection"]
         lines += ["", f"Gap detection (Partial or Gap = positive): TP {gap['tp']}, FP {gap['fp']}, "
-                  f"FN {gap['fn']}, TN {gap['tn']}.", ""]
+                  f"FN {gap['fn']}, TN {gap['tn']}. False compliance (gold Partial or Gap predicted Meets): "
+                  f"{gap['false_compliance']}.", ""]
         process = metrics["agent_process"]
         if process:
             lines += [f"Agent runs: terminations {process['terminations']}, "
