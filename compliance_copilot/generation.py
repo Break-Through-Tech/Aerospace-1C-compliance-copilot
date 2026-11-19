@@ -13,10 +13,16 @@ class LocalGenerator:
         )
         self.max_new_tokens = max_new_tokens
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_name, revision=revision,
-            torch_dtype=torch.float32 if self.device == "cpu" else torch.float16,
-        ).to(self.device).eval()
+        dtype = torch.float32 if self.device == "cpu" else torch.float16
+        if self.device == "cuda":
+            # Load weights straight onto the GPU instead of staging the full model in RAM.
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name, revision=revision, torch_dtype=dtype, device_map={"": "cuda:0"},
+            ).eval()
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name, revision=revision, torch_dtype=dtype,
+            ).to(self.device).eval()
         self.revision = self.model.config._commit_hash
 
     def __call__(self, messages):

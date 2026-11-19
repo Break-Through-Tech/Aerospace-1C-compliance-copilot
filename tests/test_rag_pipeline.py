@@ -1,11 +1,14 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
+import torch
 from pydantic import ValidationError
 
 from compliance_copilot import AuditPipeline
+from compliance_copilot.generation import LocalGenerator
 from compliance_copilot.retrieval import ClauseRetriever, retrieval_text
 from compliance_copilot.schemas import AuditResult, Clause
 
@@ -149,3 +152,94 @@ def test_embedding_normalization_preserves_recipient_and_original_meaning():
     assert retrieval_text("NASA unit tests shall be repeatable.") == "unit tests shall be repeatable."
     assert retrieval_text("NASA software shall be tested.") == "software shall be tested."
     assert retrieval_text("NASA OCE shall lead the initiative.") == "NASA OCE shall lead the initiative."
+
+
+class FakeInputs(dict):
+    def __init__(self, calls):
+        super().__init__(input_ids=torch.tensor([[1, 2, 3]]))
+        self.input_ids = self["input_ids"]
+        self.calls = calls
+
+    def to(self, device):
+        self.calls.append(("inputs_to", device))
+        return self
+
+
+class FakeTokenizer:
+    eos_token_id = 7
+
+    def __init__(self):
+        self.calls = []
+
+    def apply_chat_template(self, messages, **kwargs):
+        self.calls.append(("template", messages, kwargs))
+        return FakeInputs(self.calls)
+
+    def decode(self, tokens, **kwargs):
+        self.calls.append(("decode", tokens.tolist(), kwargs))
+        return "reply"
+
+
+class FakeModel:
+    def __init__(self):
+        self.calls = []
+        self.config = SimpleNamespace(_commit_hash="resolved-hash", max_position_embeddings=32768)
+
+    def to(self, device):
+        self.calls.append(("to", device))
+        return self
+
+    def eval(self):
+        self.calls.append("eval")
+        return self
+
+    def generate(self, **kwargs):
+        self.calls.append(("generate", kwargs))
+        return torch.tensor([[1, 2, 3, 4, 5]])
+
+
+def load_generator(monkeypatch, device):
+    import transformers
+
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: device == "cuda")
+    monkeypatch.setattr(torch.backends.mps, "is_available", lambda: device == "mps")
+    model, loads = FakeModel(), []
+    monkeypatch.setattr(transformers, "AutoTokenizer", SimpleNamespace(
+        from_pretrained=lambda *args, **kwargs: loads.append(("tokenizer", args, kwargs)) or FakeTokenizer()))
+    monkeypatch.setattr(transformers, "AutoModelForCausalLM", SimpleNamespace(
+        from_pretrained=lambda *args, **kwargs: loads.append(("model", args, kwargs)) or model))
+    # Same call shape as scripts/run_rag_demo.py and scripts/run_agent_demo.py.
+    return LocalGenerator("org/model", revision="pinned", max_new_tokens=768), model, loads
+
+
+@pytest.mark.parametrize("device, dtype, placement, calls", [
+    ("cuda", torch.float16, {"device_map": {"": "cuda:0"}}, ["eval"]),
+    ("mps", torch.float16, {}, [("to", "mps"), "eval"]),
+    ("cpu", torch.float32, {}, [("to", "cpu"), "eval"]),
+])
+def test_local_generator_loads_cuda_weights_directly(monkeypatch, device, dtype, placement, calls):
+    generator, model, loads = load_generator(monkeypatch, device)
+    assert loads == [
+        ("tokenizer", ("org/model",), {"revision": "pinned"}),
+        ("model", ("org/model",), {"revision": "pinned", "torch_dtype": dtype, **placement}),
+    ]
+    assert model.calls == calls
+    assert generator.model is model
+    # Reports and cache keys record these values.
+    assert (generator.device, generator.revision, generator.max_new_tokens) == (device, "resolved-hash", 768)
+
+
+@pytest.mark.parametrize("device", ["cuda", "mps", "cpu"])
+def test_local_generator_keeps_greedy_decoding(monkeypatch, device):
+    generator, model, _ = load_generator(monkeypatch, device)
+    messages = [{"role": "user", "content": "Audit this."}]
+    assert generator(messages) == "reply"
+    template, moved, decoded = generator.tokenizer.calls
+    assert template == ("template", messages, {"add_generation_prompt": True, "tokenize": True,
+                                               "return_dict": True, "return_tensors": "pt"})
+    assert moved == ("inputs_to", device)
+    assert decoded == ("decode", [4, 5], {"skip_special_tokens": True})
+    name, kwargs = model.calls[-1]
+    assert name == "generate"
+    assert kwargs.pop("input_ids").tolist() == [[1, 2, 3]]
+    assert kwargs == {"max_new_tokens": 768, "do_sample": False, "pad_token_id": 7}
