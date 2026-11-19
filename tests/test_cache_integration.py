@@ -1,5 +1,6 @@
 """Cache integration with fake callables. No model downloads or network calls."""
 
+import csv
 import hashlib
 import json
 import subprocess
@@ -550,7 +551,7 @@ def test_demo_help_offers_optional_cache():
         assert "--cache-path" in completed.stdout
 
 
-def _install_fakes(monkeypatch, module, retrievals, generations, build_kwargs):
+def _install_fakes(monkeypatch, module, retrievals, generations, build_kwargs, reply="not-json"):
     def build(*args, **kwargs):
         build_kwargs.append(kwargs)
 
@@ -568,7 +569,7 @@ def _install_fakes(monkeypatch, module, retrievals, generations, build_kwargs):
 
         def __call__(self, messages):
             generations.append(messages)
-            return "not-json"
+            return reply
 
     monkeypatch.setattr(module, "build_retriever", build)
     monkeypatch.setattr(module, "LocalGenerator", FakeGenerator)
@@ -701,3 +702,50 @@ def test_agent_demo_cache_keeps_results_and_runs(tmp_path, monkeypatch):
     assert "not-json" in cache.read_text(encoding="utf-8")
     assert build_kwargs[0]["revision"] == "embed-rev"
     assert not (ROOT / DEFAULT_CACHE_PATH).exists()
+
+
+def _benchmark_text(requirement_id):
+    with (ROOT / "data/benchmark/requirements.csv").open(encoding="utf-8", newline="") as stream:
+        return next(row["requirement_text"] for row in csv.DictReader(stream)
+                    if row["requirement_id"] == requirement_id)
+
+
+def test_rag_demo_passes_non_ascii_requirement_text_unchanged(tmp_path, monkeypatch):
+    import scripts.run_rag_demo as demo
+
+    # Windows defaults to cp1252, which would turn this apostrophe into mojibake.
+    text = _benchmark_text("NASA-SR-026")
+    assert "’" in text
+    out = tmp_path / "demo.json"
+    retrievals, generations, build_kwargs = [], [], []
+    _install_fakes(monkeypatch, demo, retrievals, generations, build_kwargs)
+    _argv(
+        monkeypatch, "--ids", "NASA-SR-026",
+        "--model-revision", "model-rev", "--embedding-revision", "embed-rev",
+        "--output", str(out),
+    )
+    assert demo.main() == 1
+    assert retrievals == [(text, 10)]
+    report = json.loads(out.read_text(encoding="utf-8"))
+    assert report["results"][0]["requirement_text"] == text
+
+
+def test_agent_demo_passes_non_ascii_text_and_writes_utf8(tmp_path, monkeypatch):
+    import scripts.run_agent_demo as demo
+
+    text = _benchmark_text("NASA-SR-026")
+    # cp1252 has no character for U+2265, so a non-UTF-8 write would fail.
+    reply = "not-json ≥"
+    out = tmp_path / "demo.json"
+    retrievals, generations, build_kwargs = [], [], []
+    _install_fakes(monkeypatch, demo, retrievals, generations, build_kwargs, reply=reply)
+    _argv(
+        monkeypatch, "--ids", "NASA-SR-026",
+        "--model-revision", "model-rev", "--embedding-revision", "embed-rev",
+        "--output", str(out),
+    )
+    assert demo.main() == 1
+    assert json.loads(generations[0][1]["content"])["requirement"] == text
+    report = json.loads(out.read_text(encoding="utf-8"))
+    assert report["results"][0]["requirement_text"] == text
+    assert report["runs"][0]["steps"][0]["raw_output"] == reply

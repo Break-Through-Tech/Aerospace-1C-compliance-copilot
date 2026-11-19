@@ -1,0 +1,456 @@
+{
+  "inputs": {
+    "baseline": {
+      "path": "outputs/rag/baseline-cuda-full.json",
+      "config": {
+        "backend": "transformers",
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "top_k": 10,
+        "normalize_agency": true,
+        "do_sample": false,
+        "max_new_tokens": 768,
+        "device": "cuda",
+        "python": "3.12.10",
+        "packages": {
+          "torch": "2.14.1+cu130",
+          "transformers": "4.57.6",
+          "sentence-transformers": "5.7.0",
+          "faiss-cpu": "1.15.1",
+          "pydantic": "2.13.5"
+        }
+      },
+      "input_sha256": {
+        "data/benchmark/requirements.csv": "1fc2bbfd6773bbb9de82be43bb01be9878ccb72dce5f74a8e16670bec0b2d047",
+        "data/benchmark/clauses.json": "795836d8a990b6411060e0f6729a9697aad39934f8d061e4aaf55051e8cb82fb",
+        "data/npr-7150-2d-requirements.csv": "bbea7241d65865048a318e61720e309cfd5e2e007e1a4be2c9e63a6e2b04cf96",
+        "compliance_copilot/pipeline.py": "be6e5bf7afb2ecad736a3c3815951bff208be62e9c9c4c5f9bb95389a501788b",
+        "compliance_copilot/retrieval.py": "de4f5ff508c081c9920c91a29347620fa243123087763625daefffbfb3287354",
+        "compliance_copilot/generation.py": "a4561d245e27c20108813353c2facd5130af8ebc1a73457857a4a70bf032c441",
+        "compliance_copilot/schemas.py": "8f33c49d5c1d2ffd2d346094feb6ca3d13197065c512eeb8947e88b479bcc17a",
+        "scripts/run_rag_demo.py": "356e400118cb1513908f953f512f83ae8d15bf9b3017bd7c40be855736e89e2f"
+      }
+    },
+    "agent": {
+      "path": "outputs/agent/agent-cuda-full.json",
+      "config": {
+        "mode": "tool_calling_agent",
+        "backend": "transformers",
+        "model": "Qwen/Qwen3-4B-Instruct-2507",
+        "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "top_k": 10,
+        "max_steps": 8,
+        "normalize_agency": true,
+        "do_sample": false,
+        "max_new_tokens": 768,
+        "device": "cuda",
+        "python": "3.12.10",
+        "packages": {
+          "torch": "2.14.1+cu130",
+          "transformers": "4.57.6",
+          "sentence-transformers": "5.7.0",
+          "faiss-cpu": "1.15.1",
+          "pydantic": "2.13.5"
+        }
+      },
+      "input_sha256": {
+        "data/benchmark/requirements.csv": "1fc2bbfd6773bbb9de82be43bb01be9878ccb72dce5f74a8e16670bec0b2d047",
+        "data/benchmark/clauses.json": "795836d8a990b6411060e0f6729a9697aad39934f8d061e4aaf55051e8cb82fb",
+        "data/npr-7150-2d-requirements.csv": "bbea7241d65865048a318e61720e309cfd5e2e007e1a4be2c9e63a6e2b04cf96",
+        "compliance_copilot/agent.py": "32c187327a669bf1c16bf7a7a97c9f48d4a5f2daa9c0730573e46f89d4a89714",
+        "compliance_copilot/pipeline.py": "be6e5bf7afb2ecad736a3c3815951bff208be62e9c9c4c5f9bb95389a501788b",
+        "compliance_copilot/retrieval.py": "de4f5ff508c081c9920c91a29347620fa243123087763625daefffbfb3287354",
+        "compliance_copilot/generation.py": "a4561d245e27c20108813353c2facd5130af8ebc1a73457857a4a70bf032c441",
+        "compliance_copilot/schemas.py": "8f33c49d5c1d2ffd2d346094feb6ca3d13197065c512eeb8947e88b479bcc17a",
+        "scripts/run_agent_demo.py": "dbb0c5fdf821ea5b63d2024eef43a0d92f922c6a9b826576eaff82602313ca8f"
+      }
+    }
+  },
+  "scoring_sha256": {
+    "data/benchmark/requirements.csv": "1fc2bbfd6773bbb9de82be43bb01be9878ccb72dce5f74a8e16670bec0b2d047"
+  },
+  "subset_ids": null,
+  "requirements": 50,
+  "policy": {
+    "denominator": "all benchmark IDs in the comparison; failures are never dropped",
+    "invalid_output": "counted as a wrong verdict and as not flagged (negative) for gap detection",
+    "gap_detection_positive_class": [
+      "Gap",
+      "Partial"
+    ],
+    "false_compliance": "gold Partial or Gap predicted Meets; invalid outputs are not counted",
+    "undefined_precision_or_recall": "reported as 0.0 (same as scikit-learn zero_division=0)",
+    "confidence_intervals": "percentile bootstrap over requirement IDs, paired across systems",
+    "paired_test": "exact two-sided McNemar test on per-ID correctness",
+    "verdict_agreement": "share of IDs with the same predicted verdict; two invalid outputs count as agreeing"
+  },
+  "warnings": [],
+  "systems": {
+    "baseline": {
+      "total": 50,
+      "counts": {
+        "valid_output_rate": 50,
+        "clause_retrieval_accuracy": 50,
+        "clause_citation_accuracy": 48,
+        "verdict_accuracy": 37,
+        "grounded_verdict_accuracy": 35
+      },
+      "headline": {
+        "valid_output_rate": 1.0,
+        "clause_retrieval_accuracy": 1.0,
+        "clause_citation_accuracy": 0.96,
+        "verdict_accuracy": 0.74,
+        "grounded_verdict_accuracy": 0.7,
+        "gap_precision": 0.85,
+        "gap_recall": 0.7727272727272727,
+        "gap_f1": 0.8095238095238095,
+        "macro_f1": 0.6034057045551299
+      },
+      "invalid_outputs": 0,
+      "error_codes": {},
+      "predicted_distribution": {
+        "Meets": 30,
+        "Gap": 15,
+        "Partial": 5
+      },
+      "gap_detection": {
+        "tp": 17,
+        "fp": 3,
+        "fn": 5,
+        "tn": 25,
+        "false_compliance": 5,
+        "precision": 0.85,
+        "recall": 0.7727272727272727,
+        "f1": 0.8095238095238095
+      },
+      "per_class": {
+        "Meets": {
+          "support": 28,
+          "tp": 25,
+          "fp": 5,
+          "fn": 3,
+          "precision": 0.8333333333333334,
+          "recall": 0.8928571428571429,
+          "f1": 0.8620689655172413
+        },
+        "Partial": {
+          "support": 10,
+          "tp": 1,
+          "fp": 4,
+          "fn": 9,
+          "precision": 0.2,
+          "recall": 0.1,
+          "f1": 0.13333333333333333
+        },
+        "Gap": {
+          "support": 12,
+          "tp": 11,
+          "fp": 4,
+          "fn": 1,
+          "precision": 0.7333333333333333,
+          "recall": 0.9166666666666666,
+          "f1": 0.8148148148148148
+        },
+        "macro": {
+          "precision": 0.5888888888888889,
+          "recall": 0.6365079365079366,
+          "f1": 0.6034057045551299
+        }
+      },
+      "confusion_matrix": {
+        "Meets": {
+          "Meets": 25,
+          "Partial": 3,
+          "Gap": 0,
+          "Invalid": 0
+        },
+        "Partial": {
+          "Meets": 5,
+          "Partial": 1,
+          "Gap": 4,
+          "Invalid": 0
+        },
+        "Gap": {
+          "Meets": 0,
+          "Partial": 1,
+          "Gap": 11,
+          "Invalid": 0
+        }
+      },
+      "majority_class_reference": {
+        "label": "Meets",
+        "verdict_accuracy": 0.56
+      },
+      "agent_process": null
+    },
+    "agent": {
+      "total": 50,
+      "counts": {
+        "valid_output_rate": 50,
+        "clause_retrieval_accuracy": 50,
+        "clause_citation_accuracy": 48,
+        "verdict_accuracy": 37,
+        "grounded_verdict_accuracy": 35
+      },
+      "headline": {
+        "valid_output_rate": 1.0,
+        "clause_retrieval_accuracy": 1.0,
+        "clause_citation_accuracy": 0.96,
+        "verdict_accuracy": 0.74,
+        "grounded_verdict_accuracy": 0.7,
+        "gap_precision": 0.85,
+        "gap_recall": 0.7727272727272727,
+        "gap_f1": 0.8095238095238095,
+        "macro_f1": 0.6034057045551299
+      },
+      "invalid_outputs": 0,
+      "error_codes": {},
+      "predicted_distribution": {
+        "Meets": 30,
+        "Gap": 15,
+        "Partial": 5
+      },
+      "gap_detection": {
+        "tp": 17,
+        "fp": 3,
+        "fn": 5,
+        "tn": 25,
+        "false_compliance": 5,
+        "precision": 0.85,
+        "recall": 0.7727272727272727,
+        "f1": 0.8095238095238095
+      },
+      "per_class": {
+        "Meets": {
+          "support": 28,
+          "tp": 25,
+          "fp": 5,
+          "fn": 3,
+          "precision": 0.8333333333333334,
+          "recall": 0.8928571428571429,
+          "f1": 0.8620689655172413
+        },
+        "Partial": {
+          "support": 10,
+          "tp": 1,
+          "fp": 4,
+          "fn": 9,
+          "precision": 0.2,
+          "recall": 0.1,
+          "f1": 0.13333333333333333
+        },
+        "Gap": {
+          "support": 12,
+          "tp": 11,
+          "fp": 4,
+          "fn": 1,
+          "precision": 0.7333333333333333,
+          "recall": 0.9166666666666666,
+          "f1": 0.8148148148148148
+        },
+        "macro": {
+          "precision": 0.5888888888888889,
+          "recall": 0.6365079365079366,
+          "f1": 0.6034057045551299
+        }
+      },
+      "confusion_matrix": {
+        "Meets": {
+          "Meets": 25,
+          "Partial": 3,
+          "Gap": 0,
+          "Invalid": 0
+        },
+        "Partial": {
+          "Meets": 5,
+          "Partial": 1,
+          "Gap": 4,
+          "Invalid": 0
+        },
+        "Gap": {
+          "Meets": 0,
+          "Partial": 1,
+          "Gap": 11,
+          "Invalid": 0
+        }
+      },
+      "majority_class_reference": {
+        "label": "Meets",
+        "verdict_accuracy": 0.56
+      },
+      "agent_process": {
+        "runs": 50,
+        "terminations": {
+          "finished": 50
+        },
+        "steps_mean": 3.4,
+        "steps_min": 3,
+        "steps_max": 4,
+        "query_refinements": 0,
+        "tool_sequences": {
+          "retrieve_clause > check_requirement > finish": 30,
+          "retrieve_clause > check_requirement > log_gap > finish": 20
+        }
+      }
+    }
+  },
+  "paired": {
+    "verdict_agreement": 1.0,
+    "identical_raw_output": 50,
+    "mcnemar_verdict_matches": {
+      "both_correct": 37,
+      "baseline_only_correct": 0,
+      "agent_only_correct": 0,
+      "both_wrong": 13,
+      "p_value": 1.0
+    },
+    "mcnemar_grounded_verdict_matches": {
+      "both_correct": 35,
+      "baseline_only_correct": 0,
+      "agent_only_correct": 0,
+      "both_wrong": 15,
+      "p_value": 1.0
+    }
+  },
+  "bootstrap_95ci": {
+    "valid_output_rate": {
+      "baseline": [
+        1.0,
+        1.0
+      ],
+      "agent": [
+        1.0,
+        1.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "clause_retrieval_accuracy": {
+      "baseline": [
+        1.0,
+        1.0
+      ],
+      "agent": [
+        1.0,
+        1.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "clause_citation_accuracy": {
+      "baseline": [
+        0.9,
+        1.0
+      ],
+      "agent": [
+        0.9,
+        1.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "verdict_accuracy": {
+      "baseline": [
+        0.62,
+        0.86
+      ],
+      "agent": [
+        0.62,
+        0.86
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "grounded_verdict_accuracy": {
+      "baseline": [
+        0.58,
+        0.82
+      ],
+      "agent": [
+        0.58,
+        0.82
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "gap_precision": {
+      "baseline": [
+        0.68,
+        1.0
+      ],
+      "agent": [
+        0.68,
+        1.0
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "gap_recall": {
+      "baseline": [
+        0.5789473684210527,
+        0.9444444444444444
+      ],
+      "agent": [
+        0.5789473684210527,
+        0.9444444444444444
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "gap_f1": {
+      "baseline": [
+        0.6511337209302325,
+        0.9230769230769231
+      ],
+      "agent": [
+        0.6511337209302325,
+        0.9230769230769231
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    },
+    "macro_f1": {
+      "baseline": [
+        0.49779956700886935,
+        0.7193833527480673
+      ],
+      "agent": [
+        0.49779956700886935,
+        0.7193833527480673
+      ],
+      "difference": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "bootstrap": {
+    "resamples": 10000,
+    "seed": 0
+  },
+  "gold_distribution": {
+    "Meets": 28,
+    "Gap": 12,
+    "Partial": 10
+  }
+}

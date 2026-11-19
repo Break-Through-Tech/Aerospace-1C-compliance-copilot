@@ -1,0 +1,51 @@
+requirement_id,expected_verdict,expected_swe_id,baseline_predicted_verdict,baseline_valid_output,baseline_error_code,baseline_expected_clause_retrieved,baseline_expected_clause_cited,baseline_verdict_matches,baseline_grounded_verdict_matches,agent_predicted_verdict,agent_valid_output,agent_error_code,agent_expected_clause_retrieved,agent_expected_clause_cited,agent_verdict_matches,agent_grounded_verdict_matches,agent_termination,agent_steps,agent_refined_query,agent_tool_sequence,verdicts_differ,correctness_differs,raw_output_identical
+NASA-SR-001,Meets,SWE-013,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-002,Gap,SWE-034,Gap,True,,True,False,True,False,Gap,True,,True,False,True,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-003,Meets,SWE-052,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-004,Meets,SWE-050,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-005,Partial,SWE-053,Gap,True,,True,True,False,False,Gap,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-006,Meets,SWE-055,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-007,Meets,SWE-057,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-008,Gap,SWE-061,Partial,True,,True,True,False,False,Partial,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-009,Meets,SWE-135,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-010,Meets,SWE-062,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-011,Gap,SWE-186,Gap,True,,True,False,True,False,Gap,True,,True,False,True,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-012,Meets,SWE-066,Partial,True,,True,True,False,False,Partial,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-013,Gap,SWE-187,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-014,Partial,SWE-219,Gap,True,,True,True,False,False,Gap,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-015,Meets,SWE-192,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-016,Meets,SWE-156,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-017,Partial,SWE-159,Meets,True,,True,True,False,False,Meets,True,,True,True,False,False,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-018,Meets,SWE-207,Partial,True,,True,True,False,False,Partial,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-019,Meets,SWE-079,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-020,Gap,SWE-084,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-021,Meets,SWE-087,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-022,Partial,SWE-090,Gap,True,,True,True,False,False,Gap,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-023,Meets,SWE-201,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-024,Partial,SWE-202,Gap,True,,True,True,False,False,Gap,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-025,Meets,SWE-027,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-026,Meets,SWE-037,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-027,Meets,SWE-200,Partial,True,,True,True,False,False,Partial,True,,True,True,False,False,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-028,Gap,SWE-042,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-029,Meets,SWE-204,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-030,Meets,SWE-040,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-031,Partial,SWE-174,Partial,True,,True,True,True,True,Partial,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-032,Meets,SWE-046,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-033,Partial,SWE-018,Meets,True,,True,True,False,False,Meets,True,,True,True,False,False,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-034,Partial,SWE-191,Meets,True,,True,True,False,False,Meets,True,,True,True,False,False,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-035,Meets,SWE-017,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-036,Meets,SWE-034,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-037,Partial,SWE-201,Meets,True,,True,True,False,False,Meets,True,,True,True,False,False,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-038,Meets,SWE-202,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-039,Partial,SWE-090,Meets,True,,True,True,False,False,Meets,True,,True,True,False,False,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-040,Meets,SWE-084,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-041,Gap,SWE-203,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-042,Meets,SWE-121,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-043,Gap,SWE-154,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-044,Meets,SWE-159,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-045,Meets,SWE-068,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
+NASA-SR-046,Gap,SWE-071,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-047,Gap,SWE-073,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-048,Gap,SWE-086,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-049,Gap,SWE-080,Gap,True,,True,True,True,True,Gap,True,,True,True,True,True,finished,4,False,retrieve_clause > check_requirement > log_gap > finish,False,False,True
+NASA-SR-050,Meets,SWE-196,Meets,True,,True,True,True,True,Meets,True,,True,True,True,True,finished,3,False,retrieve_clause > check_requirement > finish,False,False,True
