@@ -44,6 +44,8 @@ python scripts/validate_benchmark.py
 python -m unittest discover -s tests -v
 ```
 
+File hashes cover exact bytes. `.gitattributes` keeps the hashed benchmark files LF on every platform; a checkout made before that file existed may still hold CRLF copies on Windows, which the validator reports as "Only line endings differ". Re-check out `data/benchmark` to fix it.
+
 The validator uses only the Python standard library. Run all cells in [Benchmark_Validation_Alan_Guo.ipynb](../notebooks/Benchmark_Validation_Alan_Guo.ipynb) for readable tables and citation examples. The notebook can load this branch in Colab when a local checkout is unavailable; it needs no paid API or model key.
 
 Automated checks cover row/ID integrity, vocabulary, original-to-reviewed linkage, file hashes, source-list preservation, citation matching, and manifest counts. Tests deliberately corrupt IDs, clauses, labels, text-change flags, source completeness, and file bytes to confirm rejection. Semantic verdicts come from source inspection. The automated checks verify structure, citations, and provenance.

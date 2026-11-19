@@ -1,0 +1,10 @@
+# Byte-exact LF checkouts for files whose SHA-256 is recorded in
+# data/benchmark/manifest.json or in run reports (input_sha256, cache keys).
+# Without this, core.autocrlf=true (the Git for Windows default) rewrites them
+# with CRLF and every recorded hash stops matching. All of these are stored
+# with LF, so this changes no committed content.
+data/benchmark/*.csv text eol=lf
+data/benchmark/*.json text eol=lf
+compliance_copilot/*.py text eol=lf
+scripts/*.py text eol=lf
+tests/*.py text eol=lf

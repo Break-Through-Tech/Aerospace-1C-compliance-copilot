@@ -25,6 +25,14 @@ def load_bundle(root):
     }
 
 
+def line_ending_hint(path, expected):
+    """Name the cause when a file differs only by CRLF line endings. The check stays byte-exact."""
+    if path.exists() and hashlib.sha256(path.read_bytes().replace(b'\r\n', b'\n')).hexdigest() == expected:
+        return (' Only line endings differ (CRLF checkout, e.g. Git core.autocrlf on Windows);'
+                ' re-check out the file with LF endings as set in .gitattributes.')
+    return ''
+
+
 def validate(bundle, check_hashes=True):
     errors = []
     rows = bundle['records']
@@ -112,7 +120,7 @@ def validate(bundle, check_hashes=True):
         for filename, expected in manifest['files'].items():
             path = bundle['folder'] / filename
             if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
-                errors.append(f'File hash mismatch: {filename}.')
+                errors.append(f'File hash mismatch: {filename}.' + line_ending_hint(path, expected))
         for key in ['source_pdf', 'source_html']:
             path = bundle['root'] / manifest[key]
             if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != manifest[f'{key}_sha256']:
